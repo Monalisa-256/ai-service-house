@@ -1,0 +1,133 @@
+.investigation {
+  min-height: 100vh;
+  background: #faf7ee;
+  color: #203a35;
+  font:
+    1rem/1.55 system-ui,
+    sans-serif;
+}
+.investigation header,
+.investigation footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.investigation header {
+  background: #193e38;
+  color: #fff;
+  padding: 1rem 5vw;
+}
+.investigation header a {
+  font-size: 1.35rem;
+  font-weight: 750;
+  color: inherit;
+}
+.case-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 15rem) minmax(0, 52rem);
+  gap: 3vw;
+  max-width: 78rem;
+  margin: auto;
+  padding: 2rem;
+}
+.case-layout nav a {
+  display: block;
+  padding: 0.65rem 1rem;
+  text-decoration: none;
+}
+.case-layout a {
+  color: #19594e;
+}
+.case-layout nav a[aria-current] {
+  background: #dae9de;
+  border-left: 4px solid #296457;
+  font-weight: bold;
+}
+.investigation h1 {
+  font:
+    600 clamp(2rem, 5vw, 4rem) / 1.1 Georgia,
+    serif;
+  margin: 0.4rem 0;
+}
+.investigation h2 {
+  font:
+    600 1.55rem/1.25 Georgia,
+    serif;
+}
+.case-board,
+.investigation details {
+  background: #fffdf6;
+  padding: 1.25rem;
+  border: 1px solid #c5c8b8;
+  border-radius: 0.55rem;
+  margin: 1rem 0;
+}
+.investigation button,
+.investigation select {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid #759486;
+  background: #f5faf3;
+  border-radius: 0.3rem;
+  margin: 0.2rem;
+  color: #173e35;
+  cursor: pointer;
+}
+.investigation button:disabled {
+  opacity: 0.5;
+}
+.investigation button[aria-pressed="true"] {
+  background: #254c42;
+  color: white;
+}
+.investigation blockquote,
+.case-board li {
+  background: #f1eddf;
+  border-left: 3px solid #c68348;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+}
+.case-board.spatial {
+  perspective: 900px;
+  background: #e6d9bc;
+  box-shadow: inset 0 -0.45rem #beab89;
+}
+.spatial blockquote,
+.spatial li {
+  transform: rotateX(7deg) rotateY(-2deg) translateZ(3px);
+  box-shadow: 2px 5px 0 #b7aa8e;
+}
+.investigation textarea,
+.investigation label {
+  display: block;
+  width: 100%;
+  margin: 0.6rem 0;
+}
+.investigation fieldset {
+  margin: 1rem 0;
+}
+.investigation summary {
+  font-weight: bold;
+  cursor: pointer;
+}
+.investigation footer {
+  padding: 1rem 0;
+}
+@media (max-width: 700px) {
+  .case-layout {
+    display: block;
+    padding: 1rem;
+  }
+  .case-layout nav {
+    display: flex;
+    overflow: auto;
+    margin-bottom: 1rem;
+  }
+  .case-layout nav a {
+    flex: none;
+  }
+  .investigation header span {
+    font-size: 0.8rem;
+  }
+}

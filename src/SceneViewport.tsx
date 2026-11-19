@@ -41,7 +41,18 @@ function Model({ room, cue, time, view }: { room: SceneRoom; cue: SceneCue | nul
   }, [room, view.noticeInContext, view.proposalVisible, cue?.id, time, gltf.scene, invalidate]);
   return <primitive object={gltf.scene} />;
 }
-export function SceneViewport({ view, time, reduced }: { view: ViewportView; time: number; reduced: boolean }) {
+type SearchDesk = {cards: string[]; moveUp: (rank:number)=>void; widen:()=>void};
+function PassageCards({desk}: {desk:SearchDesk}) {
+  return <group>
+    <mesh position={[1.88,1.47,-0.67]} onClick={event=>{event.stopPropagation();desk.widen();}}>
+      <boxGeometry args={[0.52,0.34,0.055]}/><meshStandardMaterial color="#d57d40"/>
+    </mesh>
+    {desk.cards.map((id,i)=><mesh key={id} position={[-1.38+i*0.53,1.09,0.82]} onClick={event=>{event.stopPropagation();desk.moveUp(i);}}>
+      <boxGeometry args={[0.47,0.035,0.38]}/><meshStandardMaterial color={id.startsWith('p-notice')?'#d57d40':id.startsWith('p-hours')?'#f4e4bc':'#78b2a4'}/>
+    </mesh>)}
+  </group>;
+}
+export function SceneViewport({ view, time, reduced, desk }: { view: ViewportView; time: number; reduced: boolean; desk?:SearchDesk }) {
   const { room, cue } = view;
-  return <SceneError key={room}><div className="scene-canvas"><Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ position: [4.8, 3.5, 6.2], fov: 39, near: 0.1, far: 30 }} fallback={<p className="scene-fallback" role="status">WebGL is unavailable. Continue with the complete lesson below.</p>} gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }} onCreated={({ gl, camera }) => { gl.setClearColor('#e8e5da'); camera.lookAt(0, 1.1, 0); }}><ambientLight intensity={2.1}/><directionalLight position={[2, 6, 4]} intensity={2.2}/><Suspense fallback={null}><Model room={room} cue={reduced ? null : cue} time={reduced ? 0 : time} view={view}/></Suspense></Canvas></div></SceneError>;
+  return <SceneError key={room}><div className="scene-canvas"><Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ position: [4.8, 3.5, 6.2], fov: 39, near: 0.1, far: 30 }} fallback={<p className="scene-fallback" role="status">WebGL is unavailable. Continue with the complete lesson below.</p>} gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }} onCreated={({ gl, camera }) => { gl.setClearColor('#e8e5da'); camera.lookAt(0, 1.1, 0); }}>{desk&&<PassageCards desk={desk}/>}<ambientLight intensity={2.1}/><directionalLight position={[2, 6, 4]} intensity={2.2}/><Suspense fallback={null}><Model room={room} cue={reduced ? null : cue} time={reduced ? 0 : time} view={view}/></Suspense></Canvas></div></SceneError>;
 }

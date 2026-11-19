@@ -232,3 +232,22 @@ The content is ready for implementation planning when: (1) every subtopic has an
 The community services center is the unifying case. The visual direction is stylized editorial people and ordinary contemporary objects. The guided walk is primary, with a room map and optional deep dives. Its 24-minute target is an authoring budget to validate with learners. Engineer view presents provider-neutral records and traces, with a separately maintained optional platform comparison drawer. The fictional service terms, exact core beats, learner profiles, labels, and exit-check record are in `PHASE_0_FOUNDATION.md`; the shared vocabulary is in `GLOSSARY.md`.
 
 These decisions authorize a prototype, not a claim of user validation. This PRD deliberately does not select a rendering engine, frontend framework, model vendor, or deployment host; `TECH_STACK.md` recommends a stack for the vertical slice and records what must be measured.
+
+## First-release acceptance task
+
+Given a misleading answer, a first-time learner can locate the failure, cite the evidence that distinguishes it from another plausible cause, and verify that the visitor now sees the corrected answer.
+
+The opening decision and first inspected record travel with the learner. Independent entry names the starting room. In the library, compare a missing candidate with a retrieved notice removed from the briefing tray. Both produce the same unverified appointment claim. Rearranging the four narrow-search results preserves membership. Widening the search brings the current notice onto the desk.
+
+| Room | Required observation and prediction |
+| --- | --- |
+| Briefing | Remove the notice and predict which Saturday claim loses support. |
+| Records | Compare dated notices and identify which one applies. |
+| Library | Reorder the four cards and predict whether widening search changes membership. |
+| Counter | Inspect a lookup and predict whether it issued a confirmation. |
+| Workshop | Compare generated and displayed text and predict the visitor’s experience. |
+| Test room | Open the critical Saturday slice and decide whether to release. |
+| Security | Check a page’s request against public permissions and predict access. |
+| Operations | Inspect one record, diagnose the incident, apply a repair and verify delivery. |
+
+For beginner observation, start at the briefing desk, follow the folder through the library and finish in operations. Run the same task in flat and spatial views. Record the first unprompted inspection, the learner’s evidence citation and what they check after repair. Repeat with the other incident. Keep authored room studies available for further exploration.
