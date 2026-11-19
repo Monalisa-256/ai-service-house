@@ -26,7 +26,14 @@ export function current(session: Session): State {
 
 export function dispatch(content: Content, session: Session, event: Event): Session {
   if (session.scenarioId !== content.scenarioId || session.contentVersion !== content.contentVersion) throw new Error('Session content version mismatch');
-  if (session.mode === 'guided' && !guidedAllowed[session.guidedStep].includes(event.type)) throw new Error(`Event ${event.type} is unavailable in guided ${session.guidedStep}`);
+  if (session.mode === 'guided') {
+    if (!guidedAllowed[session.guidedStep].includes(event.type)) throw new Error(`Event ${event.type} is unavailable in guided ${session.guidedStep}`);
+    const reference = session.guidedStep === 'service-counter' && session.events.length < 2 &&
+      (session.events.length === 0 && event.type === 'CHECK_TUESDAY_SLOTS' && event.fixtureId === 'tuesday-ok' ||
+       session.events.length === 1 && session.events[0].type === 'CHECK_TUESDAY_SLOTS' && session.events[0].fixtureId === 'tuesday-ok' && event.type === 'PROPOSE_SLOT');
+    if (!reference && (session.guidedStep === 'service-counter' ? session.events.length !== 2 || event.type !== 'CHECK_TUESDAY_SLOTS' || event.fixtureId !== 'tuesday-timeout' : session.events.length !== 0))
+      throw new Error('Guided mode permits one controlled intervention after the reference state');
+  }
   const next = transition(content, current(session), event);
   return { ...session, events: [...session.events, event], snapshots: [...session.snapshots, next] };
 }
@@ -75,7 +82,7 @@ export function importRun(content: Content, json: string): Session {
   for (const item of value.events) {
     if (!item || typeof item !== 'object' || !eventTypes.includes(item.type)) throw new Error('Invalid run event');
     const event = item as Event;
-    const key = ({ REMOVE_CONTEXT_PASSAGE: 'passageId', REMOVE_DOCUMENT_FROM_CONTEXT: 'documentId', RESTORE_CONTEXT: null, SET_RETRIEVAL_STRATEGY: 'strategyId', SET_ROLE: 'roleId', CHECK_TUESDAY_SLOTS: 'fixtureId', PROPOSE_SLOT: 'slot', REQUEST_PASSAGE: 'passageId' } as const)[event.type];
+    const key = ({ REMOVE_CONTEXT_PASSAGE: 'passageId', REMOVE_DOCUMENT_FROM_CONTEXT: 'documentId', RESTORE_CONTEXT: null, SET_RETRIEVAL_STRATEGY: 'strategyId', SET_ROLE: 'roleId', CHECK_TUESDAY_SLOTS: 'fixtureId', CHECK_SATURDAY_SLOTS: 'fixtureId', PROPOSE_SLOT: 'slot', REQUEST_PASSAGE: 'passageId' } as const)[event.type];
     const properties = Object.keys(item);
     if (properties.length !== (key ? 2 : 1) || properties.some(p => p !== 'type' && p !== key) || key && (typeof (item as Record<string, unknown>)[key] !== 'string' || !(item as Record<string, string>)[key])) throw new Error('Invalid run event payload');
     events.push(event);

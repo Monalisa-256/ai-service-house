@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import { loadContent, type Content } from './scenario.ts';
+import type { Content } from './scenario.ts';
+import { loadContent } from './load-content.ts';
 
 function unique(ids: string[], label: string, errors: string[]): void {
   if (new Set(ids).size !== ids.length) errors.push(`Duplicate ${label} ID`);
@@ -44,14 +45,18 @@ export function validate(content: Content): string[] {
   for (const [id, fixture] of Object.entries(content.toolFixtures)) {
     if (!fixture || !Array.isArray(fixture.slots)) { errors.push(`Invalid tool fixture ${id}`); continue; }
     if (!validDate(fixture.date) || Number.isNaN(Date.parse(fixture.checkedAt))) errors.push(`Invalid tool date in ${id}`);
+    if (!['ok', 'timeout', 'unavailable'].includes(fixture.status)) errors.push(`Invalid tool status in ${id}`);
     if (fixture.status !== 'ok' && fixture.slots.length) errors.push(`Non-success fixture ${id} contains slots`);
     for (const slot of fixture.slots) if (Number.isNaN(Date.parse(slot))) errors.push(`Invalid slot in ${id}`);
   }
-  for (const id of ['baseline', 'notice_removed', 'retrieval_miss', 'tool_ok', 'tool_timeout', 'access_denied', 'hours_missing', 'service_rule_missing', 'citation_mismatch']) if (!content.explanations[id]) errors.push(`Missing explanation ${id}`);
+  for (const id of ['baseline', 'notice_removed', 'retrieval_miss', 'tool_ok', 'tool_timeout', 'tool_unavailable', 'access_denied', 'hours_missing', 'service_rule_missing', 'citation_mismatch']) if (!content.explanations[id]) errors.push(`Missing explanation ${id}`);
+  if (!Array.isArray(content.learning.scenes) || !['briefing', 'library', 'service-counter'].every(id => content.learning.scenes.includes(id))) errors.push('Missing learning scenes');
+  if (!Array.isArray(content.learning.predictionIds) || content.learning.predictionIds.length !== 3) errors.push('Missing prediction IDs');
   for (const id of ['notice_removed', 'search_narrowed', 'slot_checked', 'calendar_timeout']) if (!content.learning.cueIds.includes(id)) errors.push(`Missing cue ${id}`);
   if (!content.roles.public?.permissions.includes('read_public') || content.roles.public.permissions.includes('read_staff')) errors.push('Invalid public role');
   if (content.strategies['current-hybrid'] && !content.strategies['current-hybrid'].includes('p-notice-1')) errors.push('Canonical strategy misses current notice');
   if (content.strategies['hours-only']?.includes('p-notice-1')) errors.push('Narrow search should miss notice');
+  if (content.toolFixtures['saturday-unavailable']?.status !== 'unavailable' || content.toolFixtures['saturday-unavailable']?.date !== content.targetDate) errors.push('Missing Saturday unavailable fixture');
   if (content.toolFixtures['tuesday-ok']?.status !== 'ok' || content.toolFixtures['tuesday-timeout']?.status !== 'timeout') errors.push('Missing Tuesday outcome fixtures');
   return errors;
 }

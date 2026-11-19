@@ -1,6 +1,6 @@
 # The AI Service House — Delivery Phases
 
-**Status:** planning draft · 19 November 2026. This plan follows `HUMAN_SCALE_AI_ENGINEERING_PRD.md`, `ARCHITECTURE.md`, `SATURDAY_VERTICAL_SLICE.md`, and `TECH_STACK.md`. It orders decisions and deliverables; durations and staffing are intentionally estimates to set after the first prototype. A phase is complete only when its exit checks pass.
+**Status:** delivery plan updated 19 November 2026. Phase 1 code gate passes; Phase 2 implementation is ready for human review. See `PHASE_1_2_AUDIT.md` for verified and open checks. This plan follows `HUMAN_SCALE_AI_ENGINEERING_PRD.md`, `ARCHITECTURE.md`, `SATURDAY_VERTICAL_SLICE.md`, and `TECH_STACK.md`. It orders decisions and deliverables; durations and staffing are intentionally estimates to set after the first prototype. A phase is complete only when its exit checks pass.
 
 ## Guiding sequence
 
@@ -110,4 +110,4 @@ The critical path is **product contract → canonical fixtures/rules → 2D caus
 
 At each phase gate, present: a working artifact or exact content fixture, the relevant state/event trace, a 2D and 3D comparison where applicable, accessibility findings, device measurements when relevant, unresolved risks, and a decision to proceed or revise. This avoids treating a visual demo as proof of educational correctness.
 
-**Immediate next task:** Phase 0 review of the unifying case and learning contract, followed by Phase 1 encoding of the already specified Saturday fixtures. The first coded milestone should be a deterministic answer and explanation that can be replayed without a 3D scene.
+**Immediate next task:** publish the updated Phase 1/2 package, run the browser and assistive-technology checks, observe the three representative learner reviews, revise copy and sequence from findings, then make the Phase 3 art decision. Do not treat the learner review as completed by automated tests.

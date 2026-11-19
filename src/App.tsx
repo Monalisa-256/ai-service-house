@@ -1,0 +1,131 @@
+import { useEffect, useRef, useState } from 'react';
+import caseData from '../content/saturday-public.json';
+import { checkCitation, inspectPassage, initialState, type Content, type Event, type State } from './scenario.ts';
+import { createSession, current, dispatch, enterGuidedStep, forkExperiment, importRun, exportRun, snapshotAt, type Session } from './session.ts';
+import { compareTraces, diagnosticTrace } from './trace.ts';
+
+const content = caseData as Content;
+type Room = 'briefing' | 'library' | 'service-counter';
+type AnswerKey = 'notice' | 'hours' | 'unknown' | 'rerank' | 'missing' | 'booking' | 'proposal' | 'timeout';
+type RoomState = { session: Session; prediction: AnswerKey | null; revealed: boolean; viewed: number | null };
+type LogEntry = { sequence: number; room: Room; action: string; detail: string };
+const rooms: Room[] = ['briefing', 'library', 'service-counter'];
+const labels: Record<Room, string> = { briefing: 'The briefing', library: 'The library', 'service-counter': 'The service counter' };
+const initialRoom = (): Room => {
+  const part = location.hash.replace(/^#\/?/, '');
+  return rooms.includes(part as Room) ? part as Room : 'briefing';
+};
+function newRoom(room: Room): RoomState {
+  let session = enterGuidedStep(content, createSession(content), room);
+  // This known successful lookup is the counter's reference state, not a learner intervention.
+  if (room === 'service-counter') {
+    session = dispatch(content, session, { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-ok' });
+    session = dispatch(content, session, { type: 'PROPOSE_SLOT', slot: content.toolFixtures['tuesday-ok'].slots[0] });
+  }
+  return { session, prediction: null, revealed: false, viewed: null };
+}
+function freshRooms(): Record<Room, RoomState> { return { briefing: newRoom('briefing'), library: newRoom('library'), 'service-counter': newRoom('service-counter') }; }
+function loadRooms(): Record<Room, RoomState> {
+  try {
+    const raw = safeGet('service-house-phase2-v1');
+    if (!raw) return freshRooms();
+    const parsed = JSON.parse(raw) as Record<Room, { run: string; prediction: AnswerKey | null; revealed: boolean }>;
+    const result = freshRooms();
+    for (const room of rooms) {
+      if (!parsed[room]) continue;
+      const session = importRun(content, parsed[room].run);
+      if (session.guidedStep !== room || room === 'service-counter' && (session.events[0]?.type !== 'CHECK_TUESDAY_SLOTS' || session.events[1]?.type !== 'PROPOSE_SLOT')) continue;
+      result[room] = { session, prediction: parsed[room].prediction, revealed: !!parsed[room].revealed, viewed: null };
+    }
+    return result;
+  } catch { return freshRooms(); }
+}
+const safeGet = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+const safeSet = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* Still usable without persistent storage. */ } };
+const fmt = (iso: string) => new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Kampala' }).format(new Date(iso));
+function badge(text: string, tone: string) { return <span className={`badge ${tone}`}>{text}</span>; }
+
+export function App() {
+  const [room, setRoom] = useState<Room>(initialRoom);
+  const [roomStates, setRoomStates] = useState(loadRooms);
+  const [reduced, setReduced] = useState(() => safeGet('service-house-reduced-motion') === 'true');
+  const [log, setLog] = useState<LogEntry[]>([]);
+  const [message, setMessage] = useState('');
+  const heading = useRef<HTMLHeadingElement>(null);
+  const rs = roomStates[room];
+  const actual = current(rs.session);
+  const displayed = rs.viewed === null ? actual : snapshotAt(rs.session, rs.viewed);
+  const before = room === 'service-counter' ? snapshotAt(rs.session, 2) : initialState(content);
+  const after = actual;
+  const finished = rs.revealed;
+  const record = (action: string, detail: string, place = room) => setLog(previous => [...previous, { sequence: previous.length + 1, room: place, action, detail }]);
+  useEffect(() => {
+    const onHash = () => setRoom(initialRoom());
+    addEventListener('hashchange', onHash);
+    return () => removeEventListener('hashchange', onHash);
+  }, []);
+  useEffect(() => { heading.current?.focus(); record('route', `Entered ${labels[room]}`); }, [room]);
+  useEffect(() => {
+    const saved = Object.fromEntries(rooms.map(key => [key, { run: exportRun(roomStates[key].session), prediction: roomStates[key].prediction, revealed: roomStates[key].revealed }]));
+    safeSet('service-house-phase2-v1', JSON.stringify(saved));
+  }, [roomStates]);
+  useEffect(() => { safeSet('service-house-reduced-motion', String(reduced)); }, [reduced]);
+  const update = (patch: Partial<RoomState>) => setRoomStates(prev => ({ ...prev, [room]: { ...prev[room], ...patch } }));
+  const predict = (key: AnswerKey) => { update({ prediction: key }); record('prediction', key); setMessage('Prediction recorded. Reveal the change when you are ready.'); };
+  const intervene = () => {
+    if (!rs.prediction || rs.revealed) return;
+    const event: Event = room === 'briefing' ? { type: 'REMOVE_DOCUMENT_FROM_CONTEXT', documentId: 'doc-notice-v2' } : room === 'library' ? { type: 'SET_RETRIEVAL_STRATEGY', strategyId: 'hours-only' } : { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-timeout' };
+    update({ session: dispatch(content, rs.session, event), revealed: true, viewed: null });
+    record('guided intervention', event.type);
+    setMessage('The change is visible. Compare the two states, then inspect the evidence.');
+  };
+  const reset = () => { update(newRoom(room)); record('reset', 'Restored reference state'); setMessage(`${labels[room]} reset.`); };
+  const experiment = () => { update({ session: forkExperiment(content, rs.session), viewed: null }); record('experiment fork', 'Copied this room’s event history'); setMessage('Experiment fork opened. Only validated case controls are available.'); };
+  const experimentEvent = (event: Event) => {
+    try { update({ session: dispatch(content, rs.session, event), viewed: null }); record('experiment', `${event.type}: ${'strategyId' in event ? event.strategyId : 'fixtureId' in event ? event.fixtureId : 'documentId' in event ? event.documentId : ''}`); setMessage('Experiment updated. Compare the trace and replay its steps.'); }
+    catch (error) { setMessage(error instanceof Error ? error.message : 'That change is unavailable.'); }
+  };
+  const selectReplay = (index: number | null) => { update({ viewed: index }); record('replay', index === null ? 'Live state' : `Snapshot ${index}`); setMessage(index === null ? 'Showing the latest state.' : `Showing snapshot ${index}. The underlying run is unchanged.`); };
+  const comparison = compareTraces(diagnosticTrace(content, before), diagnosticTrace(content, after));
+  return <div className={`site ${reduced ? 'reduce-motion' : ''}`}>
+    <a className="skip" href="#main">Skip to lesson</a>
+    <header className="masthead"><a className="brand" href="#/briefing" aria-label="The AI Service House, go to briefing"><span className="brand-mark" aria-hidden="true">H<span>·</span></span><span>THE AI<br/>SERVICE HOUSE</span></a><div className="masthead-note"><span className="live-dot" aria-hidden="true"/> LEARNING LAB <span className="separator">/</span> CASE 001</div><button className="motion-button" type="button" onClick={() => { setReduced(!reduced); record('preference', `Reduced motion ${!reduced ? 'on' : 'off'}`); }} aria-pressed={reduced}>Motion: {reduced ? 'reduced' : 'standard'}</button></header>
+    <div className="layout"><aside className="rail" aria-label="Lesson navigation"><div className="rail-label">THE ROUTE <span>01—03</span></div><nav aria-label="Three learning spaces">{rooms.map((key, i) => <a key={key} href={`#/${key}`} aria-current={room === key ? 'page' : undefined} className={`room-link ${room === key ? 'active' : ''}`}><span className="room-index">0{i+1}</span><span><strong>{labels[key]}</strong><small>{['Context & evidence','Search & retrieval','Tools & commitments'][i]}</small></span><span aria-hidden="true">↗</span></a>)}</nav><div className="rail-foot"><span className="small-caps">FIELD NOTE</span><p>One question. Three places where a confident answer can change.</p><span className="line-art" aria-hidden="true">◯ ── ◇ ── □</span></div></aside>
+    <main id="main" className="main"><div className="topline"><span>RIVERSIDE / EDUCATIONAL SIMULATION</span><span>NO REAL APPOINTMENTS</span></div><div className="title-row"><div><div className="eyebrow">SPACE {String(rooms.indexOf(room)+1).padStart(2, '0')} / {room === 'briefing' ? 'THE CONTEXT DESK' : room === 'library' ? 'THE SEARCH DESK' : 'THE SERVICE DESK'}</div><h1 ref={heading} tabIndex={-1}>{labels[room]}</h1><p className="lede">{room === 'briefing' ? 'What happens when the decisive notice exists, but never reaches the answer?' : room === 'library' ? 'A search can miss the decisive notice before ranking even begins.' : 'A calendar lookup can suggest a time. It cannot make a booking.'}</p></div><div className="scene-number" aria-hidden="true">0{rooms.indexOf(room)+1}</div></div>
+    <div className="case-strip"><div><span className="small-caps">THE VISITOR ASKS</span><p>“{content.question}”</p></div><div className="case-mini"><span>21 NOV 2026</span><span>RIVERSIDE CENTER</span></div></div>
+    <section className="lesson-grid" aria-label="Learning interaction"><div className="lesson-primary"><div className="section-heading"><span className="step-disc">1</span><div><span className="small-caps">MAKE A PREDICTION</span><h2>{room === 'briefing' ? 'Remove the current notice' : room === 'library' ? 'Narrow the search to hours' : 'The calendar stops responding'}</h2></div></div><p className="body-copy">{room === 'briefing' ? 'The current notice says Saturday application-help sessions are suspended. Imagine it is removed from the answer’s context while still existing in the center’s records.' : room === 'library' ? 'A narrow query selects only opening-hours and general service passages. What can a reranker do with a notice absent from its candidates?' : 'A simulated Tuesday lookup found two possible times, and one was proposed. It has not been booked. Now imagine the next check times out.'}</p>
+    <fieldset className="prediction" disabled={rs.revealed}><legend>{room === 'briefing' ? 'What can the answer establish about Saturday application-help?' : room === 'library' ? 'Can reranking recover the missing notice?' : 'What does the timeout prove about a Tuesday booking?'}</legend>{(room === 'briefing' ? [['notice','It is still suspended because the record exists'],['hours','Opening hours prove appointments are available'],['unknown','Availability is unverified from this context']] : room === 'library' ? [['rerank','Yes, reranking can pull in any missing document'],['missing','No, the notice is not in the candidate set']] : [['booking','The earlier option is now booked'],['proposal','The earlier option remains a verified booking'],['timeout','Availability is unknown; no booking happened']]).map(([key,label]) => <label className={`choice ${rs.prediction === key ? 'selected' : ''}`} key={key}><input type="radio" name={`prediction-${room}`} value={key} checked={rs.prediction === key} onChange={() => predict(key as AnswerKey)}/><span>{label}</span></label>)}</fieldset><button type="button" className="primary-button" onClick={intervene} disabled={!rs.prediction || rs.revealed}>{rs.revealed ? 'Change revealed' : 'Reveal the change'} <span aria-hidden="true">↗</span></button>
+    {finished && <div className="feedback"><span className="feedback-icon" aria-hidden="true">✓</span><div><strong>{room === 'briefing' ? 'The status becomes unverified.' : room === 'library' ? 'The notice cannot be reranked.' : 'The timeout confirms no new availability.'}</strong><p>{room === 'briefing' ? 'The record still exists, but this answer can only use evidence in its selected context. Saturday reception hours alone do not establish appointment availability.' : room === 'library' ? 'Reranking only reorders candidates it receives. The hours-only candidate set excludes the current notice, so appointment availability remains unverified.' : 'A prior lookup displayed possible Tuesday times and one was proposed. A timeout gives no fresh slot result. The proposal is cleared; neither a lookup nor a proposal books anything.'}</p>{rs.prediction !== (room === 'briefing' ? 'unknown' : room === 'library' ? 'missing' : 'timeout') && <p className="gentle">Your prediction was different. Follow the highlighted evidence below to see why.</p>}</div></div>}</div>
+    <div className="lesson-side"><div className="section-heading"><span className="step-disc">2</span><div><span className="small-caps">INSPECT THE PROCESS</span><h2>Evidence trail</h2></div></div><Process room={room} state={displayed} /><details className="case-folder"><summary>Open the case folder <span aria-hidden="true">＋</span></summary><div className="folder-content"><p><strong>Question and role.</strong> “Can I come this Saturday to get help with my application?” Public visitor; resolved date 21 November 2026.</p><p><strong>Fictional setting.</strong> Public visitor asks about application help on Saturday. Reception can give general information 09:00–12:00; application-help sessions require an appointment.</p><p><strong>Current notice.</strong> Published 18 November; effective 21 November. Application-help appointments are suspended that Saturday.</p><p><strong>Simulated calendar.</strong> Tuesday 24 November fixture. No real calendar, reservation, or personal data.</p><p><strong>Evidence and action.</strong> The current public notice decides Saturday application-help status. The visitor can inspect candidate/context labels below. A proposed Tuesday time remains not booked.</p><p><strong>Rule.</strong> Keep reception hours, session availability, proposed slots, and bookings separate.</p></div></details></div></section>
+    <section className="comparison" aria-labelledby="comparison-title"><div className="section-heading"><span className="step-disc">3</span><div><span className="small-caps">COMPARE THE RESULT</span><h2 id="comparison-title">Before / after</h2></div></div><div className="compare-grid"><StateCard label="REFERENCE" state={before} room={room}/><StateCard label={finished ? 'AFTER YOUR CHANGE' : 'AWAITING YOUR CHANGE'} state={finished ? after : before} room={room}/></div><div className="cause"><span className="small-caps">WHAT CHANGED</span><p>{finished ? comparison.explanation.join(' ') : 'Make a prediction and reveal one change to see its causal explanation.'}</p>{finished && <small>Trace fields changed: {comparison.changed.join(', ') || 'none'}.</small>}</div></section>
+    <section className="evidence-section" aria-labelledby="evidence-title"><div className="section-heading"><span className="step-disc">4</span><div><span className="small-caps">READ THE ORIGINAL MATERIAL</span><h2 id="evidence-title">Source & tool panels</h2></div></div><div className="evidence-grid"><SourcePanel state={displayed} room={room}/><ToolPanel state={displayed}/></div></section>
+    <section className="workbench" aria-labelledby="workbench-title"><div className="section-heading"><span className="step-disc">5</span><div><span className="small-caps">REPLAY / TEST</span><h2 id="workbench-title">Your workbench</h2></div></div><div className="workbench-grid"><div><p>Replay any recorded state. The run stays intact until you reset this room. Each room keeps its own case when you switch spaces.</p><div className="button-row"><button type="button" className="secondary-button" onClick={() => selectReplay(0)}>Start</button>{rs.session.snapshots.map((_,i) => <button key={i} type="button" className="secondary-button" aria-pressed={rs.viewed === i} onClick={() => selectReplay(i)}>Step {i}</button>)}<button type="button" className="secondary-button" aria-pressed={rs.viewed === null} onClick={() => selectReplay(null)}>Latest</button><button type="button" className="text-button" onClick={reset}>Reset this room</button></div></div><div className="experiment"><span className="small-caps">VALIDATED EXPERIMENT FORK</span>{rs.session.mode === 'guided' ? <><p>After the guided reveal, copy the run to test the three bounded Saturday changes.</p><button type="button" className="secondary-button" disabled={!finished} onClick={experiment}>Open experiment fork ↗</button></> : <><p>Change only the current notice, search scope, or simulated Tuesday response. These controls use validated fixtures.</p><div className="experiment-controls"><button type="button" onClick={() => experimentEvent({ type: 'RESTORE_CONTEXT' })}>Restore notice to context</button><button type="button" onClick={() => experimentEvent({ type: 'REMOVE_DOCUMENT_FROM_CONTEXT', documentId: 'doc-notice-v2' })} disabled={!actual.contextIds.includes('p-notice-1')}>Remove notice</button><button type="button" onClick={() => experimentEvent({ type: 'SET_RETRIEVAL_STRATEGY', strategyId: 'current-hybrid' })}>Current search</button><button type="button" onClick={() => experimentEvent({ type: 'SET_RETRIEVAL_STRATEGY', strategyId: 'hours-only' })}>Hours-only search</button><button type="button" onClick={() => experimentEvent({ type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-ok' })}>Calendar: options</button><button type="button" onClick={() => experimentEvent({ type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-timeout' })}>Calendar: timeout</button></div>{actual.tool.status === 'ok' && <div className="slot-actions"><p>Propose one verified time (still not a booking):</p>{actual.tool.slots.map(slot => <button type="button" key={slot} onClick={() => experimentEvent({ type: 'PROPOSE_SLOT', slot })}>{fmt(slot)}</button>)}</div>}</>}</div></div></section>
+    <details className="observation"><summary>Prototype observation log <span aria-hidden="true">＋</span></summary><p>Local to this tab. No analytics service or personal information. Use this during a learner review to note where someone hesitates.</p><ol>{log.map(entry => <li key={entry.sequence}><strong>{entry.sequence}. {entry.action}</strong> — {labels[entry.room]}: {entry.detail}</li>)}</ol></details>
+    <footer className="footer"><p>Educational simulation · Fictional center, documents, and calendar · No booking is made.</p><p>{content.scenarioId} / {content.contentVersion}</p></footer></main></div><div className="sr-only" role="status" aria-live="polite" aria-atomic="true">{message}</div></div>;
+}
+function Process({ room, state }: { room: Room; state: State }) {
+  const items = room === 'briefing' ? [
+    ['01', 'Records', 'Current notice exists in the case folder.', true],
+    ['02', 'Selected context', state.contextIds.includes('p-notice-1') ? 'Current notice reaches the answer.' : 'Notice removed from this run’s context.', state.contextIds.includes('p-notice-1')],
+    ['03', 'Answer', state.appointmentStatus === 'suspended' ? 'Suspended, with evidence.' : 'Availability unverified.', state.appointmentStatus === 'suspended']
+  ] : room === 'library' ? [
+    ['01', 'Search scope', state.strategyId === 'hours-only' ? 'Hours-only query.' : 'Current hybrid query.', state.strategyId !== 'hours-only'],
+    ['02', 'Candidates', state.retrievalIds.includes('p-notice-1') ? 'Notice is a candidate.' : 'Notice never entered the candidate set.', state.retrievalIds.includes('p-notice-1')],
+    ['03', 'Reranking', state.retrievalIds.includes('p-notice-1') ? 'Can order the retrieved notice.' : 'Cannot add a missing document.', state.retrievalIds.includes('p-notice-1')]
+  ] : [
+    ['01', 'Tool call', state.tool.status === 'timeout' ? 'Simulated calendar times out.' : 'Reference lookup returned two options and one proposal.', state.tool.status === 'ok'],
+    ['02', 'Offer', state.tool.status === 'ok' ? 'One possible time was proposed.' : 'No current time can be verified.', state.tool.status === 'ok'],
+    ['03', 'Booking', 'No reservation or booking event occurred.', false]
+  ];
+  return <ol className="process-list">{items.map(([n,title,description,yes]) => <li key={String(n)}><span className={`process-symbol ${yes ? 'present' : 'absent'}`} aria-hidden="true">{yes ? '●' : '○'}</span><div><span className="small-caps">{n} / {title}</span><p>{description}</p></div></li>)}</ol>;
+}
+function StateCard({ label, state, room }: { label: string; state: State; room: Room }) {
+  return <article className="state-card"><div className="card-top"><span className="small-caps">{label}</span>{badge(room === 'service-counter' ? state.tool.status : state.appointmentStatus, state.appointmentStatus === 'suspended' && room !== 'service-counter' ? 'red' : 'sand')}</div><p className="state-answer">{room === 'service-counter' ? state.tool.status === 'ok' ? 'Two Tuesday options appeared; one time was proposed, not booked.' : state.tool.status === 'timeout' ? 'The calendar did not respond. Tuesday availability is unknown.' : 'No Tuesday lookup yet.' : state.appointmentStatus === 'suspended' ? 'Saturday application-help appointments are suspended.' : 'Saturday application-help availability cannot be verified.'}</p><details className="answer-detail"><summary>Read the complete answer</summary><p>{state.answer.text}</p></details><div className="state-meta"><span>Notice in context <strong>{state.contextIds.includes('p-notice-1') ? 'Yes' : 'No'}</strong></span><span>Booking <strong>Not booked</strong></span></div></article>;
+}
+function SourcePanel({ state, room }: { state: State; room: Room }) {
+  const keyIds = room === 'library' ? ['p-hours-1','p-hours-2','p-service-1','p-notice-1'] : ['p-notice-1','p-notice-2','p-hours-1','p-service-1'];
+  return <article className="panel"><div className="panel-title"><span className="small-caps">SOURCE PANEL</span><span>{state.retrievalIds.length} CANDIDATES</span></div><h3>What the answer can see</h3><p className="panel-intro">Passages are labeled by stage. A document can exist in records without being retrieved or present in context.</p><ul className="passages">{keyIds.map(id => { const passage = inspectPassage(content, state, id); if (!passage) return null; const inCandidates = state.retrievalIds.includes(id); const inContext = state.contextIds.includes(id); return <li key={id} className={id === 'p-notice-1' ? 'decisive' : ''}><div className="passage-head"><strong>{passage.title}</strong>{badge(inContext ? 'IN CONTEXT' : inCandidates ? 'CANDIDATE ONLY' : 'NOT RETRIEVED', inContext ? 'green' : 'sand')}</div><blockquote>“{passage.text}”</blockquote><div className="passage-foot"><span>{passage.published} · {id}</span>{id === 'p-notice-1' && <span>DECISIVE PASSAGE</span>}</div></li>; })}</ul><div className="source-gates"><strong>Eligibility before search</strong><p>Public, current, and effective for 21 November: eligible. The earlier notice is superseded; the staff rota is restricted; the untrusted external copy is not an eligible center source.</p></div><div className="citation-check"><strong>Citation check</strong><p>Can opening hours alone support “application-help appointments are suspended”?</p><p>{checkCitation(content, state, 'appointment-status', 'p-hours-1').supported ? 'Supported' : 'No. This passage concerns opening hours, not the appointment status.'}</p></div></article>;
+}
+function ToolPanel({ state }: { state: State }) {
+  return <article className="panel tool-panel"><div className="panel-title"><span className="small-caps">TOOL PANEL</span><span>SIMULATED</span></div><h3>Calendar lookup</h3><p className="panel-intro">A deterministic fixture demonstrates the boundary between checking, proposing, and booking.</p><div className="tool-request"><span className="small-caps">READ-ONLY REQUEST</span><code>check_application_help_slots(date: 2026-11-24, service: application_help)</code></div><dl className="tool-fields"><div><dt>Requested date</dt><dd>Tuesday, 24 November 2026</dd></div><div><dt>Checked at</dt><dd>{state.tool.fixtureId ? fmt(content.toolFixtures[state.tool.fixtureId].checkedAt) : 'No check yet'}</dd></div><div><dt>Response</dt><dd>{badge(state.tool.status === 'none' ? 'NOT CALLED' : state.tool.status.toUpperCase(), state.tool.status === 'ok' ? 'green' : 'sand')}</dd></div><div><dt>Options returned</dt><dd>{state.tool.slots.length ? state.tool.slots.map(fmt).join(' · ') : 'None verified in this state'}</dd></div><div><dt>Proposed time</dt><dd>{state.tool.proposedSlot ? fmt(state.tool.proposedSlot) : 'None'}</dd></div><div><dt>Booking</dt><dd><strong>Not booked</strong></dd></div></dl><div className="tool-rule">A checked slot is a tool result. A proposed slot is a suggestion. Booking needs a separate authorized completion event, which this simulation does not provide.</div></article>;
+}

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadContent, initialState, transition, replay, eligible, checkCitation, inspectPassage, type Event } from '../src/scenario.ts';
+import { initialState, transition, replay, eligible, checkCitation, inspectPassage, type Event } from '../src/scenario.ts';
+import { loadContent } from '../src/load-content.ts';
 import { validate } from '../src/validate.ts';
 
 const content = loadContent();
@@ -113,4 +114,14 @@ test('all supported short intervention combinations preserve evidence and bookin
     }
     if (state.tool.status !== 'ok') assert.equal(state.tool.proposedSlot, null);
   }
+});
+
+
+test('Saturday unavailable fixture matches the suspension and cannot book', () => {
+  const result = transition(content, initialState(content), { type: 'CHECK_SATURDAY_SLOTS', fixtureId: 'saturday-unavailable' });
+  assert.equal(result.tool.status, 'unavailable');
+  assert.deepEqual(result.tool.slots, []);
+  assert.equal(result.appointmentStatus, 'suspended');
+  assert.equal(result.bookingStatus, 'not_booked');
+  assert.throws(() => transition(content, initialState(content), { type: 'CHECK_SATURDAY_SLOTS', fixtureId: 'tuesday-ok' }), /fixture date/);
 });

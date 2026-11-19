@@ -1,13 +1,38 @@
 {
   "name": "ai-service-house",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "npm run verify:public && tsc --noEmit && vite build && node src/verify-bundle.ts",
+    "preview": "vite preview --host 0.0.0.0",
     "validate": "node src/validate.ts",
     "test": "node --test test/*.test.ts",
     "inspect": "node src/inspect.ts",
-    "check": "npm run validate && npm test"
+    "check": "npm run validate && npm test && npm run build && npm run test:ui",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "test:ui": "vitest run test/ui.test.tsx",
+    "sync:public": "node src/public-content.ts --write",
+    "verify:public": "node src/public-content.ts"
   },
-  "engines": { "node": ">=22.18" }
+  "engines": {
+    "node": ">=22.18"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.13",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "jsdom": "^31.0.1",
+    "playwright-core": "^1.65.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.1"
+  }
 }

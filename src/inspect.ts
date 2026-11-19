@@ -1,4 +1,5 @@
-import { loadContent, initialState, transition, explain, type State, type Event } from './scenario.ts';
+import { initialState, transition, explain, type State, type Event } from './scenario.ts';
+import { loadContent } from './load-content.ts';
 
 const content = loadContent();
 let state = initialState(content);

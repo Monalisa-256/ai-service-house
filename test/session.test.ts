@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { loadContent } from '../src/scenario.ts';
+import { loadContent } from '../src/load-content.ts';
 import { createSession, current, dispatch, enterGuidedStep, forkExperiment, restore, snapshotAt, exportRun, importRun } from '../src/session.ts';
 import { diagnosticTrace, compareTraces } from '../src/trace.ts';
 
@@ -21,7 +21,7 @@ test('exported run restores snapshots from content and rejects tampered input', 
   const changed = dispatch(content, forkExperiment(content, createSession(content)), { type: 'REMOVE_CONTEXT_PASSAGE', passageId: 'p-notice-1' });
   const json = exportRun(changed);
   assert.deepEqual(current(importRun(content, json)), current(changed));
-  assert.throws(() => importRun(content, json.replace('2026-11-19.2', '2026-11-19.1')), /version mismatch/);
+  assert.throws(() => importRun(content, json.replace(content.contentVersion, 'obsolete-version')), /version mismatch/);
   const injected = JSON.parse(json);
   injected.events.push({ type: 'SET_ROLE', roleId: 'staff', extra: 'untrusted' });
   assert.throws(() => importRun(content, JSON.stringify(injected)), /payload/);
@@ -49,4 +49,18 @@ test('experiment fork combines changes without mutating guided run; restore repl
   assert.equal(snapshotAt(combined, 0).appointmentStatus, 'suspended');
   assert.deepEqual(current(restore(content, combined, 1)), current(guided));
   assert.throws(() => snapshotAt(combined, 99));
+});
+
+
+test('guided pass has exactly one intervention after a counter reference proposal', () => {
+  const briefing = dispatch(content, createSession(content), { type: 'REMOVE_DOCUMENT_FROM_CONTEXT', documentId: 'doc-notice-v2' });
+  assert.throws(() => dispatch(content, briefing, { type: 'RESTORE_CONTEXT' }), /one controlled intervention/);
+  let counter = enterGuidedStep(content, briefing, 'service-counter');
+  counter = dispatch(content, counter, { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-ok' });
+  counter = dispatch(content, counter, { type: 'PROPOSE_SLOT', slot: content.toolFixtures['tuesday-ok'].slots[0] });
+  assert.equal(current(counter).tool.proposedSlot, content.toolFixtures['tuesday-ok'].slots[0]);
+  assert.equal(current(counter).bookingStatus, 'not_booked');
+  counter = dispatch(content, counter, { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-timeout' });
+  assert.equal(current(counter).tool.proposedSlot, null);
+  assert.throws(() => dispatch(content, counter, { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-ok' }), /one controlled intervention/);
 });
