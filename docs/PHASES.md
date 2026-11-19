@@ -1,6 +1,6 @@
 # The AI Service House — Delivery Phases
 
-**Status:** delivery plan reviewed 19 November 2026. Automated implementation checks for Phases 1–5 pass; rendered-device, learner, assistive-technology, and Phase 5 editorial gates remain open. See `PHASE_1_5_GATE_REVIEW.md` for verified and open checks. This plan follows `HUMAN_SCALE_AI_ENGINEERING_PRD.md`, `ARCHITECTURE.md`, `SATURDAY_VERTICAL_SLICE.md`, and `TECH_STACK.md`. It orders decisions and deliverables; durations and staffing are intentionally estimates to set after the first prototype. A phase is complete only when its exit checks pass.
+**Status:** original delivery plan reviewed 19 November 2026. Its presentation sequence is being revised under `EXPERIENCE_REDEFINITION.md`; existing implementation gates remain recorded below. Automated implementation checks for Phases 1–5 pass; rendered-device, learner, assistive-technology, and Phase 5 editorial gates remain open. See `PHASE_1_5_GATE_REVIEW.md` for verified and open checks. This plan follows `HUMAN_SCALE_AI_ENGINEERING_PRD.md`, `ARCHITECTURE.md`, `SATURDAY_VERTICAL_SLICE.md`, and `TECH_STACK.md`. It orders decisions and deliverables; durations and staffing are intentionally estimates to set after the first prototype. A phase is complete only when its exit checks pass.
 
 ## Guiding sequence
 

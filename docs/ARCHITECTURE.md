@@ -1,6 +1,6 @@
 # The AI Service House — Architecture
 
-**Status:** design architecture, 19 November 2026. Companion to `HUMAN_SCALE_AI_ENGINEERING_PRD.md`. This document defines the product's systems and contracts before selecting a framework, rendering engine, model provider, or host.
+**Status:** scenario and evidence architecture, 19 November 2026. The lesson-player presentation contract in `EXPERIENCE_REDEFINITION.md` supersedes the walking-room UI direction here. Companion to `HUMAN_SCALE_AI_ENGINEERING_PRD.md`. This document defines the product's systems and contracts before selecting a framework, rendering engine, model provider, or host.
 
 ## 1. Architectural decision
 

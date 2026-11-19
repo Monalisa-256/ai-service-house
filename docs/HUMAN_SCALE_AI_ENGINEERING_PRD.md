@@ -1,6 +1,6 @@
 # The AI Service House — Product Requirements Document
 
-**Status:** Phase 0 product baseline, revised 19 November 2026. Product and learning design, not an implementation commitment. The eight areas below are **concept spaces** visitors can enter in any order. The detailed Phase 0 decisions, glossary, and review criteria live in `PHASE_0_FOUNDATION.md` and `LEARNING_OBJECTIVES.md`.
+**Status:** canonical case and learning baseline, revised 19 November 2026. The presentation and guided lesson flow are superseded by `EXPERIENCE_REDEFINITION.md`. Product and learning design, not an implementation commitment. The eight areas below are **concept spaces** visitors can enter in any order. The detailed Phase 0 decisions, glossary, and review criteria live in `PHASE_0_FOUNDATION.md` and `LEARNING_OBJECTIVES.md`.
 
 ## Product thesis
 

@@ -1,6 +1,6 @@
 # The AI Service House — Technical Stack and 3D Production Plan
 
-**Status:** researched stack recommendation, 19 November 2026. This document supports `ARCHITECTURE.md` and `SATURDAY_VERTICAL_SLICE.md`. It makes implementable choices for a vertical slice while identifying decisions that require measurement. It is not a claim that any library version or browser feature will stay fixed. Official documentation links appear beside version-sensitive statements and in the source register.
+**Status:** original 3D production recommendation, 19 November 2026. `EXPERIENCE_REDEFINITION.md` now recommends an SVG/isometric causal stage with selective orthographic 3D; reassess this stack before further art production. This document supports `ARCHITECTURE.md` and `SATURDAY_VERTICAL_SLICE.md`. It makes implementable choices for a vertical slice while identifying decisions that require measurement. It is not a claim that any library version or browser feature will stay fixed. Official documentation links appear beside version-sensitive statements and in the source register.
 
 ## 1. Recommendation in one view
 
