@@ -31,7 +31,20 @@ test('extended room keeps complete HTML case study when 3D is hidden', async()=>
   expect(screen.getByRole('heading',{name:'Fixture register'})).toBeTruthy();
   expect(screen.getByRole('button',{name:'Show 3D room'}).getAttribute('aria-expanded')).toBe('false');
   expect(screen.getByRole('link',{name:/Open the final Saturday diagnostic/})).toBeTruthy();
+  await user.click(screen.getByRole('radio',{name:'I expect a different outcome'}));
   await user.click(screen.getByRole('button',{name:'Apply the change'}));
   expect(screen.getByRole('status').textContent).toContain('staff rota remains inaccessible');
   expect(screen.getByRole('button',{name:'Reset this study'})).toBeTruthy();
+});
+
+test('written diagnosis can be reviewed independently of the scored questions', async () => {
+  const user = userEvent.setup();
+  render(<FinalChallenge/>);
+  await user.click(screen.getByRole('radio', { name: 'Write a brief diagnosis' }));
+  const review = screen.getByRole('button', { name: /Review diagnosis/ });
+  expect(review.hasAttribute('disabled')).toBe(true);
+  await user.type(screen.getByRole('textbox'), 'The index omitted the Saturday notice.');
+  await user.click(review);
+  expect(screen.getByRole('heading', { name: 'Compare your diagnosis with the evidence' })).toBeTruthy();
+  expect(screen.queryByText(/rubric points/)).toBeNull();
 });

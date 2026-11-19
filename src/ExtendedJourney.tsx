@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import data from '../content/extended.json';
 import cards from '../content/inspection-cards.json';
 import publicCase from '../content/saturday-public.json';
+import { predictions } from './predictions.ts';
 import { PlatformDrawer } from './PlatformDrawer.tsx';
 import { ExtendedScenePanel } from './ExtendedScenePanel.tsx';
 import { AudioNarration } from './AudioNarration.tsx';
@@ -52,6 +53,8 @@ export function ExtendedJourney({ room }: { room: ExtendedRoom }) {
   const [viewed, setViewed] = useState<number | null>(null);
   const [answer, setAnswer] = useState<number | null>(null);
   const [inspection, setInspection] = useState<string | null>(null);
+  const [prediction, setPrediction] = useState<boolean | null>(null);
+  const [feedback, setFeedback] = useState('');
   const title = useRef<HTMLHeadingElement>(null);
   const events = runs[room];
   const actual = events.reduce((state: ExtendedState, event) => extendedTransition(state, event), initialExtendedForRoom(room));
@@ -60,15 +63,17 @@ export function ExtendedJourney({ room }: { room: ExtendedRoom }) {
   const baseline = deriveExtended(initialExtendedForRoom(room));
   const result = deriveExtended(shown);
   const action = nextEvent(room, events.length);
-  useEffect(() => { title.current?.focus(); setViewed(null); setAnswer(null); setInspection(null); }, [room]);
+  useEffect(() => { title.current?.focus(); setViewed(null); setAnswer(null); setInspection(null); setPrediction(null); setFeedback(''); }, [room]);
   useEffect(() => { try { localStorage.setItem(storageKey, JSON.stringify(runs)); } catch { /* Session remains usable. */ } }, [runs]);
   const dispatch = () => {
-    if (!action) return;
+    if (!action || prediction === null || viewed !== null) return;
+    setFeedback(prediction === predictions[action].expected ? 'Your prediction matches the result. ' : 'The result differs from your prediction. ');
+    setPrediction(null);
     const next = extendedTransition(actual, action);
     setRuns(previous => ({ ...previous, [room]: next.events }));
     setViewed(null);
   };
-  const reset = () => { setRuns(previous => ({ ...previous, [room]: [] })); setViewed(null); setAnswer(null); setInspection(null); };
+  const reset = () => { setRuns(previous => ({ ...previous, [room]: [] })); setViewed(null); setAnswer(null); setInspection(null); setPrediction(null); setFeedback(''); };
   const fixtureText = (id: string) => data.newFixtures.find(fixture => fixture.id === id);
   return <div className="site extended-site">
     <a className="skip" href="#case-content" onClick={event => { event.preventDefault(); document.getElementById('case-content')?.focus(); }}>Skip to case study</a>
@@ -80,7 +85,13 @@ export function ExtendedJourney({ room }: { room: ExtendedRoom }) {
       <ExtendedScenePanel room={room} event={shownEvents.at(-1)??null} caption={script.caption}/>
       <AudioNarration key={room} title={script.title} script={script.narration} src={`/audio/${room}.mp3`}/>
       <section className="extended-intro" aria-label="Case question"><div><span className="small-caps">THE QUESTION</span><h2>{script.core.question}</h2><p>{script.core.reference}</p></div><div><span className="small-caps">HUMAN-SCALE DIRECTION</span><p>{script.humanAction}</p><p className="extended-note">This study is an authored 2D equivalent. Its outcome is determined by the displayed fixture and rule, not by a live model.</p></div></section>
-      <section className="extended-action" aria-label="Controlled intervention"><div className="section-heading"><span className="step-disc">1</span><div><span className="small-caps">APPLY ONE CONTROLLED CHANGE</span><h2>{room === 'operations' ? 'Incident and recovery trace' : 'Inspect the causal change'}</h2></div></div><p>{script.core.cause}</p><button className="primary-button" type="button" onClick={dispatch} disabled={!action}>{action ? room === 'operations' ? `Apply ${action.toLowerCase().replaceAll('_',' ')}` : 'Apply the change' : 'Trace complete'} <span aria-hidden="true">↗</span></button>{events.length > 0 && <p className="feedback" role="status">{room === 'operations' ? data.recoverySequence[events.length-1].observation : script.core.result}</p>}</section>
+      <section className="extended-action" aria-label="Controlled intervention"><div className="section-heading"><span className="step-disc">1</span><div><span className="small-caps">APPLY ONE CONTROLLED CHANGE</span><h2>{room === 'operations' ? 'Incident and recovery trace' : 'Inspect the causal change'}</h2></div></div>{action && viewed === null && <fieldset className="prediction">
+        <legend>Predict the outcome</legend><p>{predictions[action].claim}</p>
+        {[true, false].map(value => <label className="choice" key={String(value)}>
+          <input type="radio" name="prediction" checked={prediction === value} onChange={() => setPrediction(value)}/>
+          {value ? 'I expect this to happen' : 'I expect a different outcome'}
+        </label>)}
+      </fieldset>}{viewed !== null && <p>Select Latest to continue this run.</p>}<button className="primary-button" type="button" onClick={dispatch} disabled={!action || prediction === null || viewed !== null}>{action ? room === 'operations' ? `Apply ${action.toLowerCase().replaceAll('_',' ')}` : 'Apply the change' : 'Trace complete'} <span aria-hidden="true">↗</span></button>{shownEvents.length > 0 && <p className="feedback" role="status">{viewed === null && feedback}{room === 'operations' ? data.recoverySequence[shownEvents.length-1].observation : script.core.result}</p>}</section>
       <section className="comparison" aria-label="Before and after evidence"><div className="section-heading"><span className="step-disc">2</span><div><span className="small-caps">COMPARE THE RESULT</span><h2>Case state</h2></div></div><div className="compare-grid"><StateTable label="REFERENCE" rows={describe(baseline)}/><StateTable label={viewed === null ? 'CURRENT SNAPSHOT' : `SNAPSHOT ${viewed}`} rows={describe(result)}/></div><p className="cause">{result.explanation.join(' ')}</p><div className="button-row"><button type="button" onClick={() => setViewed(0)}>Start</button>{events.map((_,index) => <button type="button" key={index} onClick={() => setViewed(index+1)} aria-pressed={viewed === index+1}>Step {index+1}</button>)}<button type="button" onClick={() => setViewed(null)} aria-pressed={viewed === null}>Latest</button><button type="button" onClick={reset}>Reset this study</button></div></section>
       <section className="evidence-section" aria-label="Case fixtures"><div className="section-heading"><span className="step-disc">3</span><div><span className="small-caps">INSPECT THE SOURCE</span><h2>Fixture register</h2></div></div><p>Only public source identifiers and authored fixture descriptions appear here. The staff rota body is never displayed.</p><ul className="fixture-list">{script.fixtures.map(id => <li key={id}><strong>{id}</strong><p>{fixtureText(id)?.text ?? (id === 'doc-rota-v1' ? 'Staff-only record: public access denied.' : id === 'doc-poisoned-v1' ? 'Untrusted external copy: not an eligible center source.' : publicCase.documents.find(document => document.id === id)?.body ?? 'Public case document.')}</p><small>{fixtureText(id)?.status ?? (id === 'doc-notice-v1' ? 'superseded' : id === 'doc-rota-v1' ? 'restricted' : id === 'doc-poisoned-v1' ? 'untrusted' : 'public case record')}</small></li>)}</ul><details className="case-folder"><summary>Open the shared case folder</summary><div className="folder-content"><p><strong>Date and scope:</strong> Saturday 21 November 2026; application-help appointments are suspended, while reception remains open for general information from 09:00 to 12:00.</p><p><strong>Action boundary:</strong> A Tuesday slot lookup or proposal never confirms a booking. This case has no booking write.</p><p><strong>Study boundary:</strong> Each room starts from a named reference snapshot. The controls here fork that room’s study; they do not overwrite the three-space guided run.</p></div></details></section>
       <section className="learning-check" aria-label="Learning check"><div className="section-heading"><span className="step-disc">4</span><div><span className="small-caps">CHECK YOUR UNDERSTANDING</span><h2>Explain the distinction</h2></div></div><fieldset disabled={!events.length}><legend>{script.assessment.prompt}</legend>{script.assessment.options.map((option,index) => <label className={`choice ${answer === index ? 'selected' : ''}`} key={option}><input type="radio" name={`assessment-${room}`} checked={answer === index} onChange={() => setAnswer(index)}/>{option}</label>)}</fieldset>{answer !== null && <p className="review-feedback" role="status">{answer === script.assessment.correct ? 'Correct. ' : 'Review the fixture and try again. '}{script.assessment.rationale}</p>}</section>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "commit": "0ebf97296a5fa79878dc17fcba1e85237faf26e7",
+  "commit": "31c16c6f02a34fa5af2a1ffd9d8493763de1f377",
   "contentVersion": "2026-11-19.ext2",
   "groups": {
     "code": [
@@ -62,7 +62,7 @@
       },
       {
         "path": "src/ExtendedJourney.tsx",
-        "sha256": "140047dc7c77bb8fb191c269065a158d351d5c7040dc8ba767b819242cf2c060"
+        "sha256": "add4f7274b032c765cfd0dbd3b633a375e0963c88cfe0d97c7717e4d561aeae8"
       },
       {
         "path": "src/ExtendedScenePanel.tsx",
@@ -70,7 +70,7 @@
       },
       {
         "path": "src/FinalChallenge.tsx",
-        "sha256": "2277ca3276d5c270db3a062e2001a5bf3a606482d548552dcb3f20fc0e56dcc5"
+        "sha256": "2a843476b273b7a5d03ae63217757e86e8da2c12373d20c98ca9238a40463e38"
       },
       {
         "path": "src/PlatformDrawer.tsx",
@@ -117,6 +117,10 @@
         "sha256": "e1b151a28d76d620f5a431d8d690cd3e458f536398f22bfee2e96526aaccb2e0"
       },
       {
+        "path": "src/predictions.ts",
+        "sha256": "e0b44d6ab4e9cb4206dd3ac27b67b192deb664616ab9cdbf750b8ce60a165c3d"
+      },
+      {
         "path": "src/public-content.ts",
         "sha256": "0539d9d0c98de10e17326f04c6f41682f5f16ca63ff9f2fce0eafe7f4f42dd0a"
       },
@@ -146,7 +150,7 @@
       },
       {
         "path": "src/styles.css",
-        "sha256": "1f440044f92849369562c83418c52f968aacc74be044e243b4ff6bbe3649cfc1"
+        "sha256": "036d56895fec812a83ed08d581c9ecf64d4c55e9757dffd98d390d21fa84f583"
       },
       {
         "path": "src/trace.ts",
@@ -182,11 +186,11 @@
       },
       {
         "path": "test/challenge.test.tsx",
-        "sha256": "8a1e90b7eb24808764546551573b9a97ba95367d9e0f7210d194fb25674214e9"
+        "sha256": "d56962cd12d3fee1d06d7e20df3f4c0a22cac8712b9a09402c1a5e2df7568f97"
       },
       {
         "path": "test/extended-ui.test.tsx",
-        "sha256": "f56972e9e07d196be212424331590822660ca3513516738d6d155df3ca2c5c20"
+        "sha256": "e830432fac493f249ff3059617598cc50e554154d8f6f063a52b583ae9e35332"
       },
       {
         "path": "test/extended.test.ts",
