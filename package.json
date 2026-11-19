@@ -16,6 +16,7 @@
     "sync:public": "node src/public-content.ts --write",
     "verify:public": "node src/public-content.ts",
     "inspect:assets": "python3 scripts/inspect_assets.py",
+    "release:manifest": "python3 scripts/release_manifest.py",
     "sync:inspection": "node scripts/compile-inspection-cards.mjs"
   },
   "engines": {

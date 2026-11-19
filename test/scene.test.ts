@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { sceneView } from '../src/scene-view.ts';
 import { sceneCue } from '../src/scene-cues.ts';
+import { extendedSceneCue } from '../src/scene-cues.ts';
 import { activateClip, captureRestPose, sampleClip } from '../src/scene-animation.ts';
 import { initialState, transition } from '../src/scenario.ts';
 import { loadContent } from '../src/load-content.ts';
@@ -116,4 +117,29 @@ test('library search and counter timeout animate their intended props', async ()
     sampleClip(mixer,clip,clip.duration/2);
     assert.ok(object.position.distanceTo(before)>0.02,`${room} should animate ${propName}`);
   }
+});
+
+test('five added room clips move named props and operations maps every incident step', async () => {
+  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+  const { AnimationMixer } = await import('three');
+  for (const [room, event, propName] of [
+    ['records','ACTIVATE_CURRENT_NOTICE','VersionCard'],
+    ['workshop','SERVE_STALE_CACHE','CacheCard'],
+    ['test-room','RUN_CANDIDATE_EVAL','EvaluationCard'],
+    ['security','INJECT_HOSTILE_SOURCE','HostileCard'],
+    ['operations','DEPLOY_STALE_INDEX','IncidentCard']
+  ] as const) {
+    const bytes=readFileSync(new URL(`../public/models/${room}.glb`,import.meta.url));
+    const buffer=bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength) as ArrayBuffer;
+    const gltf=await new Promise<any>((resolve,reject)=>new GLTFLoader().parse(buffer,'',resolve,reject));
+    const cue=extendedSceneCue(room,event);
+    const clip=gltf.animations.find((animation:{name:string})=>animation.name===cue?.clip);
+    const prop=gltf.scene.getObjectByName(propName);
+    assert.ok(clip && prop,`${room} clip and prop`);
+    const mixer=new AnimationMixer(gltf.scene);activateClip(mixer,clip);sampleClip(mixer,clip,0);
+    const start=prop.position.clone();sampleClip(mixer,clip,clip.duration/2);
+    assert.ok(prop.position.distanceTo(start)>0.02,`${room} should move its prop`);
+  }
+  const incident=['DEPLOY_STALE_INDEX','SERVE_STALE_CACHE','RUN_CANDIDATE_EVAL','CONTAIN_ROLLOUT','RESTORE_CURRENT_INDEX','INVALIDATE_CACHE','ROLLBACK_CANDIDATE','VERIFY_SATURDAY_SLICE'] as const;
+  for(const event of incident)assert.ok(manifest.rooms.operations.clips.includes(extendedSceneCue('operations',event)?.clip));
 });

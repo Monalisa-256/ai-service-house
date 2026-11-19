@@ -2,7 +2,7 @@
 import json, struct, hashlib
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
-required={'briefing':['ReceiveQuestion','PlaceNotice','RemoveNotice'],'library':['SearchNarrow'],'service-counter':['CalendarTimeout']}
+required={'briefing':['ReceiveQuestion','PlaceNotice','RemoveNotice'],'library':['SearchNarrow'],'service-counter':['CalendarTimeout'],'records':['ActivateNotice'],'workshop':['ServeStaleCache'],'test-room':['RunCandidateEval'],'security':['DenyHostileSource'],'operations':['DetectStaleIndex','ObserveCache','ReviewCriticalEval','ContainRollout','RestoreIndex','InvalidateCache','RollbackCandidate','VerifySaturday']}
 manifest={'schemaVersion':'1','generator':'Blender 4.3.2 + glTF Transform 4.5.1','rooms':{}}
 for room, expected in required.items():
     file=root/'public'/'models'/f'{room}.glb';raw=root/'assets'/'export'/f'{room}.raw.glb'

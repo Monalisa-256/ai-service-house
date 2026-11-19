@@ -41,6 +41,6 @@ try {
   const recovered = deriveExtended(replayExtended(sequence));
   if (!recovered.recoveryVerified || recovered.alert || recovered.cacheStale || recovered.bookingStatus !== 'not_booked' || recovered.rollout !== 'held' || recovered.evalResult.criticalSaturday !== true) errors.push('Recovery sequence does not satisfy its stated gates');
 } catch(error) { errors.push(`Invalid recovery sequence: ${error}`); }
-const domains=['platform.openai.com','platform.claude.com','ai.google.dev','docs.aws.amazon.com','learn.microsoft.com','docs.cohere.com','huggingface.co'];
+const domains=['developers.openai.com','platform.claude.com','aistudio.google.com','docs.aws.amazon.com','learn.microsoft.com','docs.cohere.com','huggingface.co'];
 if(platforms.entries.length!==domains.length || !platforms.entries.every((e:{officialUrl:string})=>{try{const url=new URL(e.officialUrl);return url.protocol==='https:'&&domains.includes(url.hostname);}catch{return false;}})) errors.push('Platform source register invalid');
 if(errors.length){console.error(errors.join('\n'));process.exitCode=1;} else console.log('Extended five-room content, optional inspection coverage, evaluation rubric, and platform register valid.');

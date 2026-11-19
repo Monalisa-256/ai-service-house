@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 1,
+  "commit": "e0e0a986de182338ddaf5af39f5be0552a856d75",
+  "contentVersion": "2026-11-19.ext2",
+  "groups": {
+    "code": [
+      {
+        "path": "package-lock.json",
+        "sha256": "281d890f89cdc3a490b495db6a3048fd8247ff38e19bcf9f1b9198e52bea718b"
+      },
+      {
+        "path": "package.json",
+        "sha256": "e1f23cd3f9d79db67d5b7f118af4dccacdd1d5ecdbff772ce9e8ad197851038b"
+      },
+      {
+        "path": "scripts/browser-smoke.mjs",
+        "sha256": "3138cb98348f5e98c41a6d81ce6d197c8c9b01b27c699b903a4c8da3e6c1c55f"
+      },
+      {
+        "path": "scripts/compile-inspection-cards.mjs",
+        "sha256": "886819d12895c3fa26e9c6a0643660cd6daca19d104063040a57831dae229c50"
+      },
+      {
+        "path": "scripts/inspect_assets.py",
+        "sha256": "a74fe164364d3f1cdde67dc698e13f89c5b3654f6ae803bdd585d63b7523e939"
+      },
+      {
+        "path": "scripts/make_rooms.py",
+        "sha256": "29d0c868ae2410bc1058acd5e27093b06dbeff7f8702f282a9fbb97c6a2a2509"
+      },
+      {
+        "path": "scripts/release_manifest.py",
+        "sha256": "00ada3e06fc230db1b8159e1a8fb387e27df550e1c5c373ea0a72ccbad3b6526"
+      },
+      {
+        "path": "scripts/render_preview.py",
+        "sha256": "f66e5847191fbc5b6166bcf2bb8df2cbe62200ee9694d570ff80fae5533ce8a0"
+      },
+      {
+        "path": "src/App.tsx",
+        "sha256": "cd24e45d51edc8b69eaddc7884ed434b580c2f0168248e858871edaf4f2f0c22"
+      },
+      {
+        "path": "src/AudioNarration.tsx",
+        "sha256": "00bd9e4b91a243a6aa6dae67db52a8233e348108d549b48ede3362ee9c844007"
+      },
+      {
+        "path": "src/BriefingLessonPlayer.tsx",
+        "sha256": "e66c61daf27f9b4b9e75ad0394031b76d14e00875690db18e4b5576affe32c8a"
+      },
+      {
+        "path": "src/BriefingStage.tsx",
+        "sha256": "9594d7cba33ac15db4679e26ad6d6eeab096135feb797b66ec9d1b7c882326a1"
+      },
+      {
+        "path": "src/CaseGlossary.tsx",
+        "sha256": "2638785fb8d47e26f5287c3a710e0a4e5dba9db22e36b99f2105bf6ff9b00c2c"
+      },
+      {
+        "path": "src/ExtendedJourney.tsx",
+        "sha256": "c91b5f27fdda967a71c21a6ef46473e26d1fb5cd27421cfe5913f863b3faeca9"
+      },
+      {
+        "path": "src/ExtendedScenePanel.tsx",
+        "sha256": "a3ddab69fa04b0157e8487f558294a350b5d958f1058e75a38094a8703e0599b"
+      },
+      {
+        "path": "src/FinalChallenge.tsx",
+        "sha256": "2277ca3276d5c270db3a062e2001a5bf3a606482d548552dcb3f20fc0e56dcc5"
+      },
+      {
+        "path": "src/PlatformDrawer.tsx",
+        "sha256": "50ae5594b933cd421eda8f6f3b3174c659d0ca81df6b7df381c2637f066d4be3"
+      },
+      {
+        "path": "src/SceneBoundary.tsx",
+        "sha256": "6b42031a64dd0a52ea91bb0992ce8a5a9c7955914c5811f001f854ad94a15946"
+      },
+      {
+        "path": "src/SceneViewport.tsx",
+        "sha256": "68dbc79814a84ad5eee310b74de07d8c7754ec71bd67305dca0050804ef36892"
+      },
+      {
+        "path": "src/briefing-lesson.ts",
+        "sha256": "af84998fc45477538063af5c98a055b8ccafd443cc8dda43c2662c53a08daa73"
+      },
+      {
+        "path": "src/extended.ts",
+        "sha256": "eb303e46f268cc21ca6b455648f3fd43c20d59690b75a09ad05e4333b37297c4"
+      },
+      {
+        "path": "src/inspect.ts",
+        "sha256": "cbcb6b93f90652eb1f20597cc62fdb94ba2075d818b6942a7a9462696ebefd85"
+      },
+      {
+        "path": "src/lesson-player.css",
+        "sha256": "db72285367cc8ef0f02a77f99b5d5b019b578686070a75219a71a1be3ea20a0d"
+      },
+      {
+        "path": "src/load-content.ts",
+        "sha256": "453f0c37893e7ea5c60bf66cd665e2b54928d010ba1f92bd8ea18f84152e4e33"
+      },
+      {
+        "path": "src/main.tsx",
+        "sha256": "c29940328064c545a914bb186de4fb0f950faf6084f111e3215486a98995df10"
+      },
+      {
+        "path": "src/public-content.ts",
+        "sha256": "0539d9d0c98de10e17326f04c6f41682f5f16ca63ff9f2fce0eafe7f4f42dd0a"
+      },
+      {
+        "path": "src/scenario.ts",
+        "sha256": "3828d495c67dce322587b920d447da1477e1fc4647ef8674eb8cbc7f76f86f47"
+      },
+      {
+        "path": "src/scene-animation.ts",
+        "sha256": "4bc4e473163126ff9a869789eae363f9da8671ba27f20d04c051cf059a8f1fd8"
+      },
+      {
+        "path": "src/scene-cues.ts",
+        "sha256": "db04290c907e036403d28139bb1546a34cfa4c6d8457a80af47c4067f5c02062"
+      },
+      {
+        "path": "src/scene-view.ts",
+        "sha256": "489471e4350baf7190f2e3f8ea01515ba631457bdd4cf492e25638e50373f9a1"
+      },
+      {
+        "path": "src/session.ts",
+        "sha256": "1e9f3c3c2704d10e88cf03173435412e946f177c89f3216d513e61f52bd3329a"
+      },
+      {
+        "path": "src/styles.css",
+        "sha256": "1f440044f92849369562c83418c52f968aacc74be044e243b4ff6bbe3649cfc1"
+      },
+      {
+        "path": "src/trace.ts",
+        "sha256": "211af3176262f9ed6f4c0903361465ba2a034d63f3cc0b3f8a1de97cbad390ce"
+      },
+      {
+        "path": "src/validate-extended.ts",
+        "sha256": "a6fff4e3d36627eda2fc98ff663c8450b24ae7ba4aba013d57541a3e694439a8"
+      },
+      {
+        "path": "src/validate.ts",
+        "sha256": "ac18798be835a6c512edfc3d2aa1760f138b9e155543014a614e14e9c709de86"
+      },
+      {
+        "path": "src/verify-bundle.ts",
+        "sha256": "1f339621b4ed311730b1fa9774dddf0e5b26480127e7340bfc79a53fe12a494e"
+      },
+      {
+        "path": "test/audio-narration.test.tsx",
+        "sha256": "17e7d7c976b519d71da471b2bf3fd4125487f2d93540f944312789d28315c888"
+      },
+      {
+        "path": "test/briefing-lesson.test.ts",
+        "sha256": "b68f8870f70104983d7894e6fcfdeb355b8f48375a2432fdeb228dbf081d2024"
+      },
+      {
+        "path": "test/briefing-player.test.tsx",
+        "sha256": "77ec8502e5e9d2a64396e088f3b5030c45f36ebeaac637b2750d2ca1d70b93df"
+      },
+      {
+        "path": "test/challenge.test.tsx",
+        "sha256": "8a1e90b7eb24808764546551573b9a97ba95367d9e0f7210d194fb25674214e9"
+      },
+      {
+        "path": "test/extended-ui.test.tsx",
+        "sha256": "f56972e9e07d196be212424331590822660ca3513516738d6d155df3ca2c5c20"
+      },
+      {
+        "path": "test/extended.test.ts",
+        "sha256": "74e59bc60f08238f20121ba47566ec659f6de357aecd42f8818bc56b06182a36"
+      },
+      {
+        "path": "test/scenario.test.ts",
+        "sha256": "a231cea6e413ce5630764bdb5c5197f855ffcd6cf77c050b3f7409a1f536bdda"
+      },
+      {
+        "path": "test/scene.test.ts",
+        "sha256": "88d852a2228b6763471e60579314ac3d840733d4b1585c61d7c9753bc3991273"
+      },
+      {
+        "path": "test/session.test.ts",
+        "sha256": "3560280609dbfe6bc79a32462f22d115ebd071a72a37cb7bb9a19542b569b170"
+      },
+      {
+        "path": "test/ui.test.tsx",
+        "sha256": "646b129ee29c73479469b9bf1116b9c1bff1a91b0c1cf864e95b3614d5769972"
+      },
+      {
+        "path": "tsconfig.json",
+        "sha256": "6f52977b4803807a31aeb0e43ca414b962d71fa4922805a4ea6d05f6cbf6238a"
+      },
+      {
+        "path": "vercel.json",
+        "sha256": "2cc7b0dd856db47a2cb2a9dcf648d32734623cb5c0ce14cfb50272dded4a53d6"
+      },
+      {
+        "path": "vite.config.ts",
+        "sha256": "15278ca80f3616858cd79eb1950d68d100067701ead630fd8c5529f44fdd56f3"
+      }
+    ],
+    "content": [
+      {
+        "path": "content/extended.json",
+        "sha256": "c36384c4221c3372ade4b3e31a9d63fdcf4f44188b134b8bee5a5d8a91ea0de5"
+      },
+      {
+        "path": "content/inspection-cards.json",
+        "sha256": "0ea66d517f229d292b4bd6cfdc660511f69bc9de9701627971244c7e70715475"
+      },
+      {
+        "path": "content/platforms.json",
+        "sha256": "742551df010b593610e4b1b7ff17c0a10cfd1a69764ef53c8b9be77781543fdb"
+      },
+      {
+        "path": "content/saturday-public.json",
+        "sha256": "b4e0ea80e220f31784ec7507bde67362759229b4fd79e33282a4948ddd7a0fcc"
+      },
+      {
+        "path": "content/saturday.json",
+        "sha256": "ea629f9d4caf4155c005784a74cffd98be91ac9553c70e47dfcc27ec877c13f1"
+      }
+    ],
+    "assets": [
+      {
+        "path": "assets/blender/briefing.blend",
+        "sha256": "d5e3b9f6c9a904cf53597c7812414a75859e496746ebd262b3aff26571289de1"
+      },
+      {
+        "path": "assets/blender/library.blend",
+        "sha256": "34a0de0d5213eed09f5a686bb75e404bd148c9fa5f8a46d150009da8404ea43b"
+      },
+      {
+        "path": "assets/blender/operations.blend",
+        "sha256": "ca64e394eb1d21574376f84bedce2ab7454b735c7f1f90c4af8d5072c89f44e8"
+      },
+      {
+        "path": "assets/blender/records.blend",
+        "sha256": "4ea9d957591dee566df5436789e9ef82393cc8a010f2d87f7436198a76fd1b77"
+      },
+      {
+        "path": "assets/blender/security.blend",
+        "sha256": "6bc7fcf9c442d29ce1379e0ee99c0fe0aac1c6b108569528391f8f210ae58158"
+      },
+      {
+        "path": "assets/blender/service-counter.blend",
+        "sha256": "3123b1d09a01cf7c327716584ac1b275144f6de3224aca60ca82a9a973c45742"
+      },
+      {
+        "path": "assets/blender/test-room.blend",
+        "sha256": "918278a838815a8925b32836ec88d8a1f2d933205e9ecbab1373274acadc4749"
+      },
+      {
+        "path": "assets/blender/workshop.blend",
+        "sha256": "8737268433b6ce5b076ea8634967f28ac6d0994cfaef6e27becea6908a44b9aa"
+      },
+      {
+        "path": "assets/briefing-preview.png",
+        "sha256": "37162764d3b8d44c51f34b9c00827125616a677847d0dbbab54bb5b077eebc3c"
+      },
+      {
+        "path": "assets/export/briefing.raw.glb",
+        "sha256": "368f10f9a2e9f0fc86d9729e53bf07fd53674e584d60322f2ffdd60ca653c145"
+      },
+      {
+        "path": "assets/export/library.raw.glb",
+        "sha256": "c99715c9c458c2ac506e5f7da14154c54f43116b3c16da78863ba86dfa6bdd5c"
+      },
+      {
+        "path": "assets/export/operations.raw.glb",
+        "sha256": "b7d99f150ca4ab831ce65578113b5ee08995bc69bbb5d7ed5a584e506eb2f88c"
+      },
+      {
+        "path": "assets/export/records.raw.glb",
+        "sha256": "2dc5d4e331b68a60a9f4dc30c04db7032002aa27ecfc0fd30f8b38db2ba0ba65"
+      },
+      {
+        "path": "assets/export/security.raw.glb",
+        "sha256": "ef86edeeb69449f569de694b6e19dbb206a3ee0894b89d55c9a024396935b9e7"
+      },
+      {
+        "path": "assets/export/service-counter.raw.glb",
+        "sha256": "e81e043e9d950b55821bf6e41d8d55934df844c458342d205af1b3e7e68e8961"
+      },
+      {
+        "path": "assets/export/test-room.raw.glb",
+        "sha256": "a2921f17bc6db7ebef7a8ef9a4457bbb47e5363a0c652b15a29dcbc723caa54e"
+      },
+      {
+        "path": "assets/export/workshop.raw.glb",
+        "sha256": "6c40f6bbae811a7805c591c1465dd7e6e3c24edc4b7f02cb021f5ea63f0ec030"
+      },
+      {
+        "path": "assets/manifest.json",
+        "sha256": "d23b2efe3efdce22c9030ea88ad509025a706cd5024d0a250109995c75b0c7bf"
+      },
+      {
+        "path": "public/models/briefing.glb",
+        "sha256": "c3b271d3d06c66a2f9137f0e9bc60c7ff632473bc2a47b2a01a83b0b6a49ab0b"
+      },
+      {
+        "path": "public/models/library.glb",
+        "sha256": "dd6be4ff038474ce2936e862ccdf7641d66edbc0e2ba11dc77651a2e2a7772b5"
+      },
+      {
+        "path": "public/models/operations.glb",
+        "sha256": "5fff17d66ca684d176bee847948cecb4d2f4231de9ad8be59f55b449e94d060f"
+      },
+      {
+        "path": "public/models/records.glb",
+        "sha256": "022ccebd3892a98c67b627c72f61f1a5edb2d560dc5ddc5881de13c10d46a140"
+      },
+      {
+        "path": "public/models/security.glb",
+        "sha256": "73f861ea8386e317299b10680264bc069b77b0f5a27b975d42d691f11869b5eb"
+      },
+      {
+        "path": "public/models/service-counter.glb",
+        "sha256": "ff04b907a76cd4efcc09a1049f0099a31c51674f31d97ed2ec78014d276dcad0"
+      },
+      {
+        "path": "public/models/test-room.glb",
+        "sha256": "27732961ce5abd52180563eb1d8bd1f9132ec9f2514a9b850acf4a38801a18e8"
+      },
+      {
+        "path": "public/models/workshop.glb",
+        "sha256": "617f4edeaad32583729cd6a1f52d21280170277e89ce8b5ff869b3bda7576340"
+      }
+    ],
+    "docs": [
+      {
+        "path": "README.md",
+        "sha256": "1725528bf00a2cb435c9947e553db1305fb4a2ed074e03f6c51734e81539d4aa"
+      },
+      {
+        "path": "docs/ARCHITECTURE.md",
+        "sha256": "328482436f7ab0dd5e2b713c0b8ac7c04b47121065ae11652b8ae3d55123014a"
+      },
+      {
+        "path": "docs/BRIEFING_LESSON_PLAYER.md",
+        "sha256": "aa969b416e999819fe34bfddc9605703f34977cf9be0f474af6d718b78ece3ac"
+      },
+      {
+        "path": "docs/EXPERIENCE_REDEFINITION.md",
+        "sha256": "573bbcd6dd5e1ad02e67130b3b97a3c94daa1bcba92065548ed2e1e94b209109"
+      },
+      {
+        "path": "docs/GLOSSARY.md",
+        "sha256": "ebaaa57cc98ba159691805be123010c34b781e1c0379b9e9bbcc3c9bb7896789"
+      },
+      {
+        "path": "docs/HUMAN_SCALE_AI_ENGINEERING_PRD.md",
+        "sha256": "9f10525fbdc0082958d00b3588087ce58dee7630761d53b56a9882e9cbc6c614"
+      },
+      {
+        "path": "docs/LEARNING_OBJECTIVES.md",
+        "sha256": "6fdf81fa1878f779b8db49b0c685b961c5f959235dfbada0770df354903617c1"
+      },
+      {
+        "path": "docs/PHASES.md",
+        "sha256": "0f21ffee81317fcc416912fb8d6dab470d7b731af2bc12e449158040a6366d98"
+      },
+      {
+        "path": "docs/PHASE_0_FOUNDATION.md",
+        "sha256": "0985ae1b85343cd1abeee2081d8b8362b33240d3ef140e0b2dff0e7700eaf8b7"
+      },
+      {
+        "path": "docs/PHASE_0_TO_2_TRACEABILITY.md",
+        "sha256": "9ae16d1b9372eb536e1b247a9762e04d74b9ee2133ed8762370cd762041b1b01"
+      },
+      {
+        "path": "docs/PHASE_1_2_AUDIT.md",
+        "sha256": "de4d44ac7411e3a6120f6885204953f73ab248a0f687dc9aa1c52f0b2b7cd8b3"
+      },
+      {
+        "path": "docs/PHASE_1_5_GATE_REVIEW.md",
+        "sha256": "37a65d4e22a4e5caf227e6ccaf4c8251231faf213232a2fde48bda3b3cc78e71"
+      },
+      {
+        "path": "docs/PHASE_1_IMPLEMENTATION.md",
+        "sha256": "06726e83e9a5a662f4cc1aafc720be2bbdac2456824f3e0c04920ce7537ee3a1"
+      },
+      {
+        "path": "docs/PHASE_2_IMPLEMENTATION.md",
+        "sha256": "0182ccd2eb42adf21d981b5801c264961a45e057969c8544d790367601f0b92f"
+      },
+      {
+        "path": "docs/PHASE_3_4_IMPLEMENTATION.md",
+        "sha256": "dfa766dfc8d607a0f5242a50d0d6fcac95ba7e08f57657bff431d07d034af1b8"
+      },
+      {
+        "path": "docs/PHASE_5_AUTHORING.md",
+        "sha256": "6ce873d39112ada8340abe86704797efc52adf6a6ce78fc5400642ebfa717d76"
+      },
+      {
+        "path": "docs/PHASE_5_INSPECTION_MATRIX.md",
+        "sha256": "90c774baacd16dab0999c5bd30f489569853658d2c5ec77676a874c6117f0034"
+      },
+      {
+        "path": "docs/PHASE_6_8_GATE.md",
+        "sha256": "33e8d7bdac81f1a46152b21acf9501836ea8eead149e2899f91aac1887f703a6"
+      },
+      {
+        "path": "docs/SATURDAY_VERTICAL_SLICE.md",
+        "sha256": "87b4823684e7e06e5616bf7ed176179311ca1e4e3c0efbd4a4f0a1179332a718"
+      },
+      {
+        "path": "docs/TECH_STACK.md",
+        "sha256": "f32c43874628333e574bcb001dbab4c7f9d0fe3f32116768b5a2e7d473973a26"
+      },
+      {
+        "path": "docs/VERCEL_SETUP.md",
+        "sha256": "e0de0510f44a5d010866ba40bba86bdab423b626c2b342f32c119f44af68f1ae"
+      }
+    ]
+  }
+}

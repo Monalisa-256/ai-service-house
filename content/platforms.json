@@ -2,9 +2,9 @@
   "reviewedOn": "2026-11-19",
   "scope": "Illustrative documentation pointers, not a vendor ranking or a claim of equivalent features.",
   "entries": [
-    { "name": "OpenAI API", "concept": "Tool calls and structured application workflows", "designImplication": "The application must execute a requested tool and distinguish its result from a completed side effect.", "officialUrl": "https://platform.openai.com/docs/guides/tools" },
+    { "name": "OpenAI API", "concept": "Tool calls and structured application workflows", "designImplication": "The application must execute a requested tool and distinguish its result from a completed side effect.", "officialUrl": "https://developers.openai.com/api/docs/guides/tools" },
     { "name": "Claude Platform", "concept": "Client and server tool use", "designImplication": "A tool-use block and a tool result are distinct; app-owned tools run in the application.", "officialUrl": "https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" },
-    { "name": "Gemini API", "concept": "Function calling", "designImplication": "A declared function call returns arguments that application code executes and reports back.", "officialUrl": "https://ai.google.dev/gemini-api/docs/get-started" },
+    { "name": "Gemini API", "concept": "Function calling", "designImplication": "A declared function call returns arguments that application code executes and reports back.", "officialUrl": "https://aistudio.google.com/docs/get-started" },
     { "name": "Amazon Bedrock", "concept": "Knowledge-base evaluation", "designImplication": "A retrieval workflow should be evaluated on a query dataset, not one showcase answer.", "officialUrl": "https://docs.aws.amazon.com/bedrock/latest/userguide/evaluation.html" },
     { "name": "Microsoft Foundry", "concept": "Retrieval and groundedness evaluation", "designImplication": "Separate whether a passage was retrieved from whether an answer is supported by it.", "officialUrl": "https://learn.microsoft.com/en-us/azure/foundry/concepts/evaluation-evaluators/rag-evaluators" },
     { "name": "Cohere", "concept": "Reranking", "designImplication": "Reranking sorts an existing candidate list; it cannot retrieve a missing passage on its own.", "officialUrl": "https://docs.cohere.com/docs/rerank" },

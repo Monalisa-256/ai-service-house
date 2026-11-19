@@ -113,13 +113,40 @@ def make(mode):
         object_action(notice,'RemoveNotice',[(1,(0,0,0)),(20,(.38,.13,.23)),(41,(.78,.25,.36))])
         question=bpy.data.objects['QuestionCard']
         object_action(question,'ReceiveQuestion',[(1,(-.5,-.8,.10)),(20,(-.22,-.4,.12)),(41,(0,0,0))])
+    extended = {
+        'records': ('ActivateNotice','VersionCard','RecordsShelf'),
+        'workshop': ('ServeStaleCache','CacheCard','InterfaceScreen'),
+        'test-room': ('RunCandidateEval','EvaluationCard','EvaluationBoard'),
+        'security': ('DenyHostileSource','HostileCard','AccessGate'),
+        'operations': ('DetectStaleIndex','IncidentCard','OperationsBoard'),
+    }
+    if mode in extended:
+        clip, card_name, fixture_name = extended[mode]
+        fixture = cube(fixture_name,(1.12,1.87,1.61),(1.34,.12,1.24),green,.025)
+        cube(f'{fixture_name}Inset',(1.12,1.78,1.61),(1.04,.035,.88),paper,.008)
+        card = cube(card_name,(.45,-.46,1.04),(.66,.42,.015),terra if mode in ('security','operations') else paper,.008)
+        cube(f'{card_name}Rule',(.45,-.46,1.052),(.47,.035,.003),ink)
+        object_action(card,clip,[(1,(.63,.25,.24)),(20,(.3,.12,.18)),(41,(0,0,0))])
+        if mode == 'records':
+            for index in range(3):cube(f'ArchiveNotice{index+1}',(2.31,1.84,1.0+index*.37),(.66,.16,.24),[paper,terra,wall][index],.01)
+        elif mode == 'workshop':
+            cube('ResponsePanel',(2.34,1.95,1.55),(.75,.05,.61),paper,.01)
+        elif mode == 'test-room':
+            for index in range(5):cube(f'TestCase{index+1}',(2.0+index*.2,1.89,.76),(.12,.08,.22),terra if index==4 else paper,.005)
+        elif mode == 'security':
+            cube('DeniedMarker',(2.29,1.86,1.55),(.65,.06,.22),terra,.01)
+        else:
+            cube('RolloutBarrier',(2.38,1.85,1.55),(.64,.07,.34),terra,.01)
+            for name in ['ObserveCache','ReviewCriticalEval','ContainRollout','RestoreIndex','InvalidateCache','RollbackCandidate','VerifySaturday']:
+                object_action(card,name,[(1,(.55,.20,.18)),(20,(.26,.09,.14)),(41,(0,0,0))])
     neutral={'arm.R':(0,0,0),'arm.L':(0,0,0),'head':(0,0,0)}
     reach={'arm.R':(.25,-.15,-.30),'arm.L':(-.12,.05,.12),'head':(.05,0,0)}
     lift={'arm.R':(-.15,-.25,-.52),'arm.L':(0,0,0),'head':(.02,0,0)}
-    for name,pose in ([('ReceiveQuestion',reach),('PlaceNotice',lift),('RemoveNotice',reach)] if mode=='briefing' else [('SearchNarrow',reach)] if mode=='library' else [('CalendarTimeout',lift)]):
+    poses = ([('ReceiveQuestion',reach),('PlaceNotice',lift),('RemoveNotice',reach)] if mode=='briefing' else [('SearchNarrow',reach)] if mode=='library' else [('CalendarTimeout',lift)] if mode=='service-counter' else [(extended[mode][0],reach)] + ([(name,lift) for name in ['ObserveCache','ReviewCriticalEval','ContainRollout','RestoreIndex','InvalidateCache','RollbackCandidate','VerifySaturday']] if mode=='operations' else []))
+    for name,pose in poses:
         action_for(rig,name,[(1,neutral),(20,pose),(41,neutral)])
     bpy.context.scene.frame_start=1;bpy.context.scene.frame_end=41;bpy.context.scene.render.fps=24
     bpy.ops.wm.save_as_mainfile(filepath=str(MASTER / f'{mode}.blend'))
     bpy.ops.export_scene.gltf(filepath=str(OUT / f'{mode}.glb'),export_format='GLB',export_animations=True,export_animation_mode='NLA_TRACKS',export_nla_strips=True,export_apply=False)
     print('EXPORTED',mode,(OUT / f'{mode}.glb').stat().st_size)
-for room in ['briefing','library','service-counter']:make(room)
+for room in ['briefing','library','service-counter','records','workshop','test-room','security','operations']:make(room)

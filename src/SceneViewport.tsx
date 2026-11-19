@@ -3,7 +3,6 @@ import { Canvas, useLoader, useThree } from '@react-three/fiber';
 import { AnimationMixer } from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { activateClip, captureRestPose, sampleClip } from './scene-animation.ts';
-import type { SceneView } from './scene-view.ts';
 import type { SceneCue, SceneRoom } from './scene-cues.ts';
 import { sceneAssets } from './scene-cues.ts';
 
@@ -12,7 +11,8 @@ class SceneError extends Component<{ children: ReactNode }, { failed: boolean }>
   static getDerivedStateFromError() { return { failed: true }; }
   render() { return this.state.failed ? <p className="scene-fallback" role="status">The 3D view is unavailable on this device or connection. Continue with the complete lesson below.</p> : this.props.children; }
 }
-function Model({ room, cue, time, view }: { room: SceneRoom; cue: SceneCue | null; time: number; view: SceneView }) {
+export type ViewportView = { room: SceneRoom; cue: SceneCue | null; noticeInContext?: boolean; proposalVisible?: boolean };
+function Model({ room, cue, time, view }: { room: SceneRoom; cue: SceneCue | null; time: number; view: ViewportView }) {
   const gltf = useLoader(GLTFLoader, sceneAssets[room]);
   const mixer = useMemo(() => new AnimationMixer(gltf.scene), [gltf.scene]);
   const restorePose = useMemo(() => captureRestPose(gltf.scene), [gltf.scene]);
@@ -29,17 +29,19 @@ function Model({ room, cue, time, view }: { room: SceneRoom; cue: SceneCue | nul
   useEffect(() => {
     const animating = !!cue && time < cue.duration;
     const noticeVisible = view.noticeInContext || animating;
-    for (const name of ['CurrentNoticeCard', 'NoticeLabel']) {
-      const object = gltf.scene.getObjectByName(name);
-      if (object) object.visible = room === 'service-counter' ? true : noticeVisible;
+    if (room === 'briefing' || room === 'library' || room === 'service-counter') {
+      for (const name of ['CurrentNoticeCard', 'NoticeLabel']) {
+        const object = gltf.scene.getObjectByName(name);
+        if (object) object.visible = room === 'service-counter' ? true : noticeVisible;
+      }
+      const proposal = gltf.scene.getObjectByName('ProposalCard');
+      if (proposal) proposal.visible = !!view.proposalVisible || animating;
     }
-    const proposal = gltf.scene.getObjectByName('ProposalCard');
-    if (proposal) proposal.visible = view.proposalVisible || animating;
     invalidate();
   }, [room, view.noticeInContext, view.proposalVisible, cue?.id, time, gltf.scene, invalidate]);
   return <primitive object={gltf.scene} />;
 }
-export function SceneViewport({ view, time, reduced }: { view: SceneView; time: number; reduced: boolean }) {
+export function SceneViewport({ view, time, reduced }: { view: ViewportView; time: number; reduced: boolean }) {
   const { room, cue } = view;
   return <SceneError key={room}><div className="scene-canvas"><Canvas frameloop="demand" dpr={[1, 1.5]} camera={{ position: [4.8, 3.5, 6.2], fov: 39, near: 0.1, far: 30 }} fallback={<p className="scene-fallback" role="status">WebGL is unavailable. Continue with the complete lesson below.</p>} gl={{ antialias: true, alpha: false, powerPreference: 'low-power' }} onCreated={({ gl, camera }) => { gl.setClearColor('#e8e5da'); camera.lookAt(0, 1.1, 0); }}><ambientLight intensity={2.1}/><directionalLight position={[2, 6, 4]} intensity={2.2}/><Suspense fallback={null}><Model room={room} cue={reduced ? null : cue} time={reduced ? 0 : time} view={view}/></Suspense></Canvas></div></SceneError>;
 }

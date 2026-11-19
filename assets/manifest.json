@@ -65,6 +65,120 @@
       "clipDurationsSeconds": {
         "CalendarTimeout": 1.708
       }
+    },
+    "records": {
+      "optimized": "/models/records.glb",
+      "sha256": "022ccebd3892a98c67b627c72f61f1a5edb2d560dc5ddc5881de13c10d46a140",
+      "rawBytes": 93076,
+      "optimizedBytes": 48424,
+      "savingPercent": 48.0,
+      "blenderBytes": 1649888,
+      "nodes": 49,
+      "meshes": 40,
+      "triangles": 640,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "ActivateNotice"
+      ],
+      "clipDurationsSeconds": {
+        "ActivateNotice": 1.708
+      }
+    },
+    "workshop": {
+      "optimized": "/models/workshop.glb",
+      "sha256": "617f4edeaad32583729cd6a1f52d21280170277e89ce8b5ff869b3bda7576340",
+      "rawBytes": 90016,
+      "optimizedBytes": 47964,
+      "savingPercent": 46.7,
+      "blenderBytes": 1869560,
+      "nodes": 47,
+      "meshes": 38,
+      "triangles": 616,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "ServeStaleCache"
+      ],
+      "clipDurationsSeconds": {
+        "ServeStaleCache": 1.708
+      }
+    },
+    "test-room": {
+      "optimized": "/models/test-room.glb",
+      "sha256": "27732961ce5abd52180563eb1d8bd1f9132ec9f2514a9b850acf4a38801a18e8",
+      "rawBytes": 96128,
+      "optimizedBytes": 48528,
+      "savingPercent": 49.5,
+      "blenderBytes": 2125256,
+      "nodes": 51,
+      "meshes": 39,
+      "triangles": 628,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "RunCandidateEval"
+      ],
+      "clipDurationsSeconds": {
+        "RunCandidateEval": 1.708
+      }
+    },
+    "security": {
+      "optimized": "/models/security.glb",
+      "sha256": "73f861ea8386e317299b10680264bc069b77b0f5a27b975d42d691f11869b5eb",
+      "rawBytes": 90040,
+      "optimizedBytes": 47992,
+      "savingPercent": 46.7,
+      "blenderBytes": 2332920,
+      "nodes": 47,
+      "meshes": 38,
+      "triangles": 616,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "DenyHostileSource"
+      ],
+      "clipDurationsSeconds": {
+        "DenyHostileSource": 1.708
+      }
+    },
+    "operations": {
+      "optimized": "/models/operations.glb",
+      "sha256": "5fff17d66ca684d176bee847948cecb4d2f4231de9ad8be59f55b449e94d060f",
+      "rawBytes": 139816,
+      "optimizedBytes": 65740,
+      "savingPercent": 53.0,
+      "blenderBytes": 2617296,
+      "nodes": 47,
+      "meshes": 38,
+      "triangles": 616,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "DetectStaleIndex",
+        "ObserveCache",
+        "ReviewCriticalEval",
+        "ContainRollout",
+        "RestoreIndex",
+        "InvalidateCache",
+        "RollbackCandidate",
+        "VerifySaturday"
+      ],
+      "clipDurationsSeconds": {
+        "DetectStaleIndex": 1.708,
+        "ObserveCache": 1.708,
+        "ReviewCriticalEval": 1.708,
+        "ContainRollout": 1.708,
+        "RestoreIndex": 1.708,
+        "InvalidateCache": 1.708,
+        "RollbackCandidate": 1.708,
+        "VerifySaturday": 1.708
+      }
     }
   }
 }
