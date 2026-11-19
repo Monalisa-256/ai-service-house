@@ -60,6 +60,66 @@
       "bytes": 43724,
       "sha256": "453ffd11aa23ffafc8a9258a00917edd2932e89d8d1bec399a3bb5e54010f993",
       "scriptSha256": "6ff396c3a57db66586cdf95b1b29d17a3310006eb6ae697c3851fcee45ec2d9f"
+    },
+    "library-1": {
+      "file": "/audio/library-1.mp3",
+      "bytes": 54956,
+      "sha256": "31e75b2686d7f85632b2273b2d237070a21cec54f5333915a3d347d901fb0ef8",
+      "scriptSha256": "6953959a655d7c7d016c427ec73cb921a9cea479adfed632bebfac5f85b8c573"
+    },
+    "library-2": {
+      "file": "/audio/library-2.mp3",
+      "bytes": 52652,
+      "sha256": "9466e2ff70341401867ac5f33f61822108a9264a1dd59d63ac18443cf5df726a",
+      "scriptSha256": "5160454721b0d675c6e35030fc661250a90033e69d57035113ab87802675a7fe"
+    },
+    "library-3": {
+      "file": "/audio/library-3.mp3",
+      "bytes": 71516,
+      "sha256": "e7f7b0043ec73748c496fb343acb20daacbd8791a4a2fd3387d32418ee0cb4e1",
+      "scriptSha256": "abb9f3c25b326dbe5fde1695913ebf934d7e8a03445aafb809aad2e2e81a5706"
+    },
+    "library-4": {
+      "file": "/audio/library-4.mp3",
+      "bytes": 48908,
+      "sha256": "965b8f80650a5ebbdf232c21677a9e8a2b5a83bba9ebd2d3a8b63d786842a1f2",
+      "scriptSha256": "e132f66c910ade36477a914383a5f61b247a1902794bd99044e1b11abe35605d"
+    },
+    "library-5": {
+      "file": "/audio/library-5.mp3",
+      "bytes": 60860,
+      "sha256": "44280c9795ac5d29a1fb761bf1405e135e2c53bc800eeacf7d92a564aefd436c",
+      "scriptSha256": "5020531a9c3e9c96ad5cb2028eb90e090dbd87eae8f47634ac15cec8d563466c"
+    },
+    "service-counter-1": {
+      "file": "/audio/service-counter-1.mp3",
+      "bytes": 61292,
+      "sha256": "99d2a4440da059d65bc09f33f77734e6dff25f23b3893d4d1cd72ac9978579d1",
+      "scriptSha256": "3d3f3c6b429a7fac3e31d94e995304245a522b61f7c87d3ea19fe5e3f10b49ef"
+    },
+    "service-counter-2": {
+      "file": "/audio/service-counter-2.mp3",
+      "bytes": 51932,
+      "sha256": "23d478c413dc8de1e339f2d812e3d2086013bce804bfa861e5628df0ad64402a",
+      "scriptSha256": "5bca366aa0884e382ae92cfdba8294d04bb83cd7dbed619665c26ac15aaa6d75"
+    },
+    "service-counter-3": {
+      "file": "/audio/service-counter-3.mp3",
+      "bytes": 51644,
+      "sha256": "ffda33357273e8edf7ff2cb2491139016a246df72388101c24fd2d8e5da58c45",
+      "scriptSha256": "d92755512f036eb2fcf5a68122b9eeae1d4d0142b7f456b44f96d421a35b82c4"
+    },
+    "service-counter-4": {
+      "file": "/audio/service-counter-4.mp3",
+      "bytes": 65036,
+      "sha256": "a7c38fb8377b7b2a168efcee62577a0d7ecd15cb9c9a7ad1b63891d15fec3538",
+      "scriptSha256": "435ee7824a2a1a07e0292b2df7876314ba3d3678e2309ce6c1ee161086129870"
+    },
+    "service-counter-5": {
+      "file": "/audio/service-counter-5.mp3",
+      "bytes": 66044,
+      "sha256": "260e47cccde8464e59b9355b1717ead9ca776e467d3d68959dfc668aa853a742",
+      "scriptSha256": "9d46359871b2052369d4993970e7f5f25f5a732a77d2b99f660e7f5db1fa1640"
     }
   }
 }

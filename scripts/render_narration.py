@@ -11,8 +11,10 @@ source=(root/'src'/'briefing-lesson.ts').read_text()
 briefing=re.findall(r"id: '([^']+)'.*?narration: '([^']+)'",source)
 assert len(briefing)==5, 'Briefing script extraction changed; review before rendering.'
 extended=json.loads((root/'content'/'extended.json').read_text())
+slice_lessons=json.loads((root/'content'/'slice-lessons.json').read_text())
 scripts={f'briefing-{index+1}':text for index,(_,text) in enumerate(briefing)}
 scripts.update({room['id']:room['narration'] for room in extended['rooms']})
+scripts.update({f'{room}-{index}':beat['narration'] for room,lesson in slice_lessons.items() for index,beat in enumerate(lesson['beats'],1)})
 manifest={}
 for name,text in scripts.items():
     script_file=out/f'{name}.txt'

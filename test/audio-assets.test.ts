@@ -4,14 +4,16 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { briefingBeats } from '../src/briefing-lesson.ts';
 import extended from '../content/extended.json' with { type:'json' };
+import slice from '../content/slice-lessons.json' with { type:'json' };
 
-test('all ten prerecorded tracks are nonempty MP3s for the exact visible scripts',()=>{
+test('all twenty prerecorded tracks are nonempty MP3s for the exact visible scripts',()=>{
   const manifest=JSON.parse(readFileSync(new URL('../assets/audio-manifest.json',import.meta.url),'utf8'));
   const scripts=Object.fromEntries([
     ...briefingBeats.map((beat,index)=>[`briefing-${index+1}`,beat.narration]),
-    ...extended.rooms.map(room=>[room.id,room.narration])
+    ...extended.rooms.map(room=>[room.id,room.narration]),
+    ...Object.entries(slice).flatMap(([room,lesson])=>lesson.beats.map((beat,index)=>[`${room}-${index+1}`,beat.narration]))
   ]);
-  assert.equal(Object.keys(manifest.tracks).length,10);
+  assert.equal(Object.keys(manifest.tracks).length,20);
   for(const [name,script] of Object.entries(scripts)) {
     const info=manifest.tracks[name];assert.ok(info);
     const bytes=readFileSync(new URL(`../public${info.file}`,import.meta.url));

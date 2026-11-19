@@ -36,11 +36,11 @@ try {
   await page.getByRole('button', { name: /Reveal the change/ }).click();
   await page.getByText('The status becomes unverified.').waitFor();
   assert.match(await page.locator('.comparison').innerText(), /Saturday application-help availability cannot be verified/);
-  await page.getByRole('link', { name: /The library/ }).click();
+  await page.goto('http://127.0.0.1:5173/#/library-classic');
   await page.getByRole('radio', { name: /No, the notice is not/ }).check();
   await page.getByRole('button', { name: /Reveal the change/ }).click();
   assert.match(await page.locator('.lesson-side').innerText(), /cannot add a missing document/i);
-  await page.getByRole('link', { name: /The service counter/ }).click();
+  await page.goto('http://127.0.0.1:5173/#/service-counter-classic');
   await page.getByRole('radio', { name: /Availability is unknown/ }).check();
   await page.getByRole('button', { name: /Reveal the change/ }).click();
   assert.match(await page.locator('.comparison').innerText(), /Not booked/);
@@ -59,7 +59,7 @@ try {
   await mobile.getByRole('heading', { name: 'Where did the answer get its evidence?' }).waitFor();
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await mobile.screenshot({ path: join(artifactDir, 'briefing-player-mobile.png'), fullPage: true });
-  await mobile.goto('http://127.0.0.1:5173/#/library');
+  await mobile.goto('http://127.0.0.1:5173/#/library-classic');
   await mobile.getByRole('heading', { name: 'The library' }).waitFor();
   await mobile.getByRole('button', { name: 'Hide 3D view' }).waitFor();
   await mobile.locator('canvas, .scene-fallback').first().waitFor();

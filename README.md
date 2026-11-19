@@ -1,10 +1,10 @@
 # The AI Service House
 
-**Experience direction update:** The briefing desk now opens as a five-step visual lesson player with a central human-scale diagram, step guide, status, timeline, exact evidence drawer, answer comparison, optional spoken narration, and motion controls. [Read the reference audit and redesigned lesson-player contract](docs/EXPERIENCE_REDEFINITION.md). The other seven spaces retain their earlier workbench presentation while their visual lessons are authored.
+**Experience direction update:** The briefing desk, reference library, and service counter now open as five-step visual lesson players with human-scale diagrams, step guides, state readouts, exact evidence drawers, comparisons, recorded narration, and motion controls. Their detailed workbenches remain at `#/briefing-classic`, `#/library-classic`, and `#/service-counter-classic`. [Read the reference audit and lesson-player contract](docs/EXPERIENCE_REDEFINITION.md). The remaining five spaces retain their earlier workbench presentation.
 
 A human-scale educational simulation of how an AI service answer depends on context, retrieval, tool evidence, source quality, application delivery, evaluation, security, and operations. All eight rooms have human-scale 3D scenes and complete HTML evidence. Five later studies use controlled authored interventions, replay, assessments, and optional concept cards. The Riverside center, documents, visitor, dates, and calendar are fictional. No appointment can be booked.
 
-**Phase 6 production:** All eight rooms now have optimized human-scale 3D models, optional narration, and HTML case studies. The final diagnostic is at `#/challenge`. The briefing visual player is the design target; the other rooms still use a detailed workbench layout. [Read the Phases 6–8 gate report](docs/PHASE_6_8_GATE.md) before treating this as a release.
+**Phase 6 production:** All eight rooms have optimized human-scale 3D models, optional narration, and HTML case studies. The final diagnostic is at `#/challenge`. The first three rooms use a focused visual player; the other five use a detailed workbench layout. [Read the Phases 6–8 gate report](docs/PHASE_6_8_GATE.md) before treating this as a validated release.
 
 ## Run locally
 

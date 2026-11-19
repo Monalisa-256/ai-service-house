@@ -23,7 +23,8 @@ const validPredictions = new Set<AnswerKey>(['notice','hours','unknown','rerank'
 const labels: Record<Room, string> = { briefing: 'The briefing', library: 'The library', 'service-counter': 'The service counter' };
 const initialRoom = (): Room => {
   const part = location.hash.replace(/^#\/?/, '');
-  return rooms.includes(part as Room) ? part as Room : 'briefing';
+  const room = part.replace(/-classic$/, '') as Room;
+  return rooms.includes(room) ? room : 'briefing';
 };
 function newRoom(room: Room): RoomState {
   let session = enterGuidedStep(content, createSession(content), room);
