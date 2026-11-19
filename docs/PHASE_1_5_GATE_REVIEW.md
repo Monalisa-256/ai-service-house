@@ -8,7 +8,7 @@
 | Phase 2 three-space HTML path | DOM tests cover routes, prediction, evidence, proposal, persistence, replay, reset, keyboard-native controls, and reduced-motion toggle. | Implementation green; rendered browser, screen-reader and observed-learner checks open. |
 | Phase 3 asset contract | Three Blender masters, raw/optimized GLBs, hash/count manifest, named clips, skinned worker, Three GLTFLoader parse tests. | Asset gate green; phone/laptop frame time and GPU behavior unmeasured. |
 | Phase 4 parity contract | Scene view comes from the same scenario state as HTML. Motion controls cannot dispatch scenario events. The 2D source/tool panels remain mounted. | Automated checks green; visual cue boundaries, fallback, AT, and learner explanations open. |
-| Phase 5 authored core | Five room scripts, source and cache/index fixtures, five evaluation cases, eight-event recovery trace, assessments, narration/captions, optional subtopic matrix, dependency rules, final rubric, dated provider register. | Draft/validator gate green; educator/editorial approval of all cards and platform claims open. |
+| Phase 5 authored core | Five room scripts, source and cache/index fixtures, five evaluation cases, eight-event recovery trace, assessments, narration/captions, optional subtopic matrix compiled into inspected cards, dependency rules, final rubric, dated provider register. Five visitor-facing 2D case studies exercise the core beats. | Implementation/validator gate green; educator/editorial approval and observed understanding open. |
 
 ## Reproducible manual gate
 
@@ -20,4 +20,4 @@ The editor and technical reviewer should check every optional row in `PHASE_5_IN
 
 ## Known constraints
 
-This sandbox launches Vite on `127.0.0.1`, but Chromium exits before opening a page because its process singleton cannot create a socket (`Operation not permitted`). The browser script is present for a normal local or CI runner. The optional Three/R3F chunk is about 257 KB gzip in the current build, so device timing and potential code splitting are an explicit performance decision. The remaining five rooms are authored Phase 5 content; their visitor-facing implementation belongs to Phase 6.
+This sandbox launches Vite on `127.0.0.1`, but local Chromium exits before opening a page because its process singleton cannot create a socket (`Operation not permitted`). The deployed site was inspected in a cloud browser: WebGL was disabled there, the 3D boundary reported unavailability, and the 2D lesson remained visible. This verifies only that fallback, not GPU motion or performance. The browser script is present for a normal local or CI runner. The optional Three/R3F chunk is about 257 KB gzip in the prior build, so device timing and code splitting remain performance decisions. The five further rooms have visitor-facing 2D studies; their Blender/3D production belongs to Phase 6.

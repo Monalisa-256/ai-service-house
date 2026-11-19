@@ -1,6 +1,6 @@
 # The AI Service House
 
-A human-scale educational simulation of how an AI service answer depends on context, retrieval, and tool evidence. Phases 3–4 add optional human-scale 3D room prototypes over the complete HTML and 2D three-space vertical slice. Phase 5 now has authored core content drafts for the remaining five rooms. The Riverside center, documents, visitor, dates, and calendar are fictional. No appointment can be booked.
+A human-scale educational simulation of how an AI service answer depends on context, retrieval, tool evidence, source quality, application delivery, evaluation, security, and operations. The first three rooms have animated human-scale 3D scenes and complete HTML evidence. Five further studies have controlled 2D interventions, replay, assessments, and optional concept cards. The Riverside center, documents, visitor, dates, and calendar are fictional. No appointment can be booked.
 
 ## Run locally
 
@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-Open the address printed by Vite. Visit `#/briefing`, `#/library`, and `#/service-counter`. A static deployment on Vercel uses `vercel.json` and the Vite `dist` output.
+Open the address printed by Vite. Visit `#/briefing`, `#/library`, `#/service-counter`, `#/records`, `#/workshop`, `#/test-room`, `#/security`, and `#/operations`. A static deployment on Vercel uses `vercel.json` and the Vite `dist` output.
 
 ```sh
 npm run check
@@ -35,6 +35,6 @@ See [Phase 2 implementation and learner review](docs/PHASE_2_IMPLEMENTATION.md) 
 
 ## 3D art and extended content
 
-Choose **Show 3D view** in any of the three rooms. The optional module loads an optimized GLB with a skinned service worker and a named clip; fixed camera, pause, scrub, skip, reduced motion, and asset/WebGL fallbacks leave the 2D evidence usable. Editable Blender masters, export script, asset manifest, and measured file-size report are in `assets/` and `scripts/`. See [Phases 3–4 implementation](docs/PHASE_3_4_IMPLEMENTATION.md).
+The first three rooms open their 3D scene alongside the lesson. The optional module loads an optimized GLB with a skinned service worker and a named clip; fixed camera, pause, scrub, skip, reduced motion, and asset/WebGL fallbacks leave the 2D evidence usable. Hide the view to avoid WebGL. Editable Blender masters, export script, asset manifest, and measured file-size report are in `assets/` and `scripts/`. See [Phases 3–4 implementation](docs/PHASE_3_4_IMPLEMENTATION.md).
 
-The five remaining room scripts, fixed evaluation cases, dependency rules, final diagnostic rubric, and dated provider documentation drawer are authored as Phase 5 content. See [Phase 5 authoring status](docs/PHASE_5_AUTHORING.md). The remaining rooms are not yet visitor-facing.
+The five further room scripts, fixed evaluation cases, dependency rules, final diagnostic rubric, and dated provider documentation drawer are authored as Phase 5 content and displayed as accessible case studies. The optional inspection matrix compiles into `content/inspection-cards.json`; run `npm run sync:inspection` after changing it. See [Phase 5 authoring status](docs/PHASE_5_AUTHORING.md). The five further rooms do not yet have 3D art; that remains Phase 6 production.

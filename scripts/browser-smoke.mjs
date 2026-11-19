@@ -11,7 +11,7 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:5173/#/briefing');
   await page.getByRole('heading', { name: 'The briefing' }).waitFor();
-  await page.getByRole('button', { name: 'Show 3D view' }).click();
+  await page.getByRole('button', { name: 'Hide 3D view' }).waitFor();
   await page.locator('canvas, .scene-fallback').first().waitFor();
   assert.match(await page.locator('.lesson-grid').innerText(), /Evidence trail/);
   await page.getByRole('button', { name: 'Motion: standard' }).click();
@@ -42,7 +42,7 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await mobile.goto('http://127.0.0.1:5173/#/library');
   await mobile.getByRole('heading', { name: 'The library' }).waitFor();
-  await mobile.getByRole('button', { name: 'Show 3D view' }).click();
+  await mobile.getByRole('button', { name: 'Hide 3D view' }).waitFor();
   await mobile.locator('canvas, .scene-fallback').first().waitFor();
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await mobile.screenshot({ path: join(artifactDir, 'phase2-mobile.png'), fullPage: true });

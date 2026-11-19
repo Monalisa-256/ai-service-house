@@ -6,6 +6,6 @@ export class SceneBoundary extends Component<{ children: ReactNode; room: string
     if (previous.room !== this.props.room && this.state.failed) this.setState({ failed: false });
   }
   render() {
-    return this.state.failed ? <p className="scene-fallback" role="status">The 3D view could not load. The complete 2D lesson remains available below.</p> : this.props.children;
+    return this.state.failed ? <p className="scene-fallback" role="status">The 3D view is unavailable on this device or connection. Continue with the complete lesson below.</p> : this.props.children;
   }
 }

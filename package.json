@@ -1,21 +1,22 @@
 {
   "name": "ai-service-house",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "npm run verify:public && tsc --noEmit && vite build && node src/verify-bundle.ts",
     "preview": "vite preview --host 0.0.0.0",
-    "validate": "node src/validate.ts && node src/validate-extended.ts",
+    "validate": "node scripts/compile-inspection-cards.mjs --check && node src/validate.ts && node src/validate-extended.ts",
     "test": "node --test test/*.test.ts",
     "inspect": "node src/inspect.ts",
     "check": "npm run validate && npm test && npm run build && npm run test:ui",
     "test:browser": "node scripts/browser-smoke.mjs",
-    "test:ui": "vitest run test/ui.test.tsx",
+    "test:ui": "vitest run test/*.test.tsx",
     "sync:public": "node src/public-content.ts --write",
     "verify:public": "node src/public-content.ts",
-    "inspect:assets": "python3 scripts/inspect_assets.py"
+    "inspect:assets": "python3 scripts/inspect_assets.py",
+    "sync:inspection": "node scripts/compile-inspection-cards.mjs"
   },
   "engines": {
     "node": ">=22.18"

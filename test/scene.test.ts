@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { sceneView } from '../src/scene-view.ts';
 import { sceneCue } from '../src/scene-cues.ts';
+import { activateClip, captureRestPose, sampleClip } from '../src/scene-animation.ts';
 import { initialState, transition } from '../src/scenario.ts';
 import { loadContent } from '../src/load-content.ts';
 const content=loadContent();
@@ -61,5 +62,58 @@ test('Three.js GLTFLoader parses each optimized room and its named clip', async 
     const gltf=await new Promise<any>((resolve,reject)=>new GLTFLoader().parse(array,'',resolve,reject));
     assert.ok(gltf.scene.getObjectByName('ServiceWorkerRig'));
     assert.ok(gltf.animations.length>=1);
+  }
+});
+
+test('briefing clips actually move cards and clamp at the final pose', async () => {
+  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+  const { AnimationMixer } = await import('three');
+  const data=readFileSync(new URL('../public/models/briefing.glb',import.meta.url));
+  const array=data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength) as ArrayBuffer;
+  const gltf=await new Promise<any>((resolve,reject)=>new GLTFLoader().parse(array,'',resolve,reject));
+  const notice=gltf.scene.getObjectByName('CurrentNoticeCard');
+  const question=gltf.scene.getObjectByName('QuestionCard');
+  assert.ok(notice && question);
+  const restNotice=notice.position.clone();
+  const mixer=new AnimationMixer(gltf.scene);
+  const restorePose=captureRestPose(gltf.scene);
+  for(const [name,prop] of [['ReceiveQuestion',question],['PlaceNotice',notice],['RemoveNotice',notice]] as const){
+    mixer.stopAllAction();
+    restorePose();
+    const clip=gltf.animations.find((item:{name:string})=>item.name===name);
+    assert.ok(clip);
+    activateClip(mixer,clip);
+    sampleClip(mixer,clip,0);
+    const start=prop.position.clone();
+    sampleClip(mixer,clip,clip.duration/2);
+    assert.ok(prop.position.distanceTo(start)>0.03,`${name} should move its named prop`);
+    sampleClip(mixer,clip,clip.duration);
+    const end=prop.position.clone();
+    assert.ok(end.distanceTo(start)>0.03,`${name} should end in a distinct pose`);
+    sampleClip(mixer,clip,clip.duration+0.1);
+    assert.ok(prop.position.distanceTo(end)<0.001,`${name} should hold its final pose`);
+  }
+  mixer.stopAllAction();restorePose();
+  assert.ok(notice.position.distanceTo(restNotice)<0.001);
+});
+
+test('library search and counter timeout animate their intended props', async () => {
+  const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js');
+  const { AnimationMixer } = await import('three');
+  for (const [room, name, propName] of [
+    ['library', 'SearchNarrow', 'CurrentNoticeCard'],
+    ['service-counter', 'CalendarTimeout', 'CalendarScreen']
+  ] as const) {
+    const data=readFileSync(new URL(`../public/models/${room}.glb`,import.meta.url));
+    const array=data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength) as ArrayBuffer;
+    const gltf=await new Promise<any>((resolve,reject)=>new GLTFLoader().parse(array,'',resolve,reject));
+    const object=gltf.scene.getObjectByName(propName), clip=gltf.animations.find((item:{name:string})=>item.name===name);
+    assert.ok(object && clip);
+    const mixer=new AnimationMixer(gltf.scene);
+    activateClip(mixer,clip);
+    sampleClip(mixer,clip,0);
+    const before=object.position.clone();
+    sampleClip(mixer,clip,clip.duration/2);
+    assert.ok(object.position.distanceTo(before)>0.02,`${room} should animate ${propName}`);
   }
 });

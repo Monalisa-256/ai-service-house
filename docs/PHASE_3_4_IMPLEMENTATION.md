@@ -1,6 +1,6 @@
 # Phases 3–4 — Human-scale 3D prototype and three-space integration
 
-**Build state · 19 November 2026.** The briefing desk, library, and service counter have editable Blender masters and optimized GLBs. The 3D presentation is optional and the full semantic 2D path remains visible below it. Asset and engine checks pass; measured phone/laptop performance and observed learner comprehension remain open exit gates.
+**Build state · 19 November 2026.** The briefing desk, library, and service counter have editable Blender masters and optimized GLBs. The 3D presentation opens with the first three rooms and can be hidden; the full semantic 2D path remains visible below it. Asset and engine checks pass; measured phone/laptop performance and observed learner comprehension remain open exit gates.
 
 ## Art and export contract
 
@@ -31,7 +31,7 @@ python3 scripts/inspect_assets.py
 
 `sceneView(room, state)` derives the notice candidate/context flags, tool/proposal/booking statuses, candidate IDs, and semantic cue from the same scenario snapshot consumed by the HTML lesson. `sceneCue` maps only known event cues to named clips. The R3F scene may change prop visibility and play a clip; it cannot mutate the scenario. `RemoveNotice` corresponds to the context-removal event, `SearchNarrow` to a retrieval-strategy event, and `CalendarTimeout` to the Tuesday tool timeout. The public status and evidence panels update when `dispatch` returns, before any animation completes.
 
-The optional view uses a fixed camera, no orbit controls, demand rendering, capped DPR 1–1.5, and no high-resolution textures. Pause, scrub, and skip change only the clip time. Reduced motion presents the static state. The full 2D panels remain mounted whether 3D is hidden, loading, unsupported, or failed. The viewport has a WebGL fallback and error boundaries around both the lazy module and asset loading.
+The view uses a fixed camera, no orbit controls, demand rendering, capped DPR 1–1.5, and no high-resolution textures. Pause, scrub, and skip change only the clip time. Reduced motion presents the static state. A cue starts on a new guided event in the active room; entering a saved room does not replay a completed event. The exported clip is sampled just before its duration boundary to hold the final pose instead of wrapping to the first key. Resetting a cue restores the rest pose. The full 2D panels remain mounted whether 3D is hidden, loading, unsupported, or failed. The viewport has a WebGL fallback and error boundaries around both the lazy module and asset loading.
 
 ## Measurements and limits
 
@@ -40,9 +40,10 @@ The optional view uses a fixed camera, no orbit controls, demand rendering, capp
 | Runtime GLB transfer size | 50,884 / 55,768 / 45,356 bytes | File bytes; compression by HTTP may differ. |
 | Asset optimization | About 47.6% / 69.4% / 47.5% smaller | Raw versus optimized GLB; see manifest. |
 | 2D app bundle | Build output in `dist/assets` | Vite report after `npm run build`. |
-| Optional 3D code chunk | About 968 KB minified, 257 KB gzip | Loaded only when visitor chooses “Show 3D”; library weight is a remaining performance concern. |
+| 3D code chunk | About 968 KB minified, 257 KB gzip | Loaded when a visitor enters one of the first three rooms; can be hidden. Library weight remains a performance concern. |
 | Blender preview | Generated and visually inspected | This checks composition, not browser rendering or accessibility. |
-| GLB runtime parse | All three pass `GLTFLoader.parse` | Node test; no GPU rendering claim. |
+| GLB runtime parse and motion | All three pass `GLTFLoader.parse`; briefing cards move at midpoint and hold final pose | Node test; no GPU rendering claim. |
+| Deployed cloud-browser fallback | Observed on `ai-service-house.vercel.app` on 19 November 2026 | Browser reported WebGL context disabled; semantic 2D lesson remained usable. This is not a GPU performance result. |
 | Modest Android phone FPS/memory | **Not measured** | Record model, browser, DPR, load time, frame-time distribution, memory/proxy, and battery/thermal observations during device test. |
 | Integrated-graphics laptop FPS/memory | **Not measured** | Same test with keyboard, reduced motion, WebGL disabled, and failed asset path. |
 

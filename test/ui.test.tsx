@@ -44,7 +44,7 @@ test('native controls, status, replay, and reduced motion are available', async 
   await user.click(screen.getByRole('radio', { name: /Availability is unverified from this context/ }));
   await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
   await user.click(screen.getByRole('button', { name: 'Step 0' }));
-  expect(screen.getByRole('status', { name: '' }).textContent).toContain('Showing snapshot 0');
+  expect(document.querySelector('.sr-only[role="status"]')?.textContent).toContain('Showing snapshot 0');
   expect(screen.getByText('Current notice reaches the answer.')).toBeTruthy();
   await user.click(screen.getByRole('button', { name: /Open experiment fork/ }));
   expect(screen.getByRole('button', { name: /Restore notice to context/ })).toBeTruthy();
@@ -84,7 +84,20 @@ test('a saved reduced-motion preference prevents motion even when a 3D view is r
   const user = userEvent.setup();
   render(<App />);
   expect(screen.getByRole('button', { name: 'Motion: reduced' }).getAttribute('aria-pressed')).toBe('true');
-  await user.click(screen.getByRole('button', { name: 'Show 3D view' }));
+  expect(screen.getByRole('button', { name: 'Hide 3D view' })).toBeTruthy();
   expect(screen.getByText('Motion reduced: static scene')).toBeTruthy();
   expect(screen.getByRole('heading', { name: 'Evidence trail' })).toBeTruthy();
+});
+
+test('guided motion is visible by default and skip never changes the case facts', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  expect(screen.getByRole('button', { name: 'Hide 3D view' })).toBeTruthy();
+  await user.click(screen.getByRole('radio', { name: /Availability is unverified from this context/ }));
+  await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
+  expect(screen.getByText('Illustrative clip: RemoveNotice')).toBeTruthy();
+  const before = screen.getByText('The status becomes unverified.').textContent;
+  await user.click(screen.getByRole('button', { name: 'Skip motion' }));
+  expect(screen.getByText('The status becomes unverified.').textContent).toBe(before);
+  expect(screen.getByText('Current notice exists in the case folder.')).toBeTruthy();
 });
