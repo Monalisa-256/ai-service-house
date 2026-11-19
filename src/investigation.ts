@@ -26,10 +26,20 @@ export const makeCase = (origin: Space, incident: Incident) => ({
   order: [] as string[],
   notes: [] as string[],
   done: [] as Space[],
+  choices: {} as Partial<Record<Space, number>>,
+  inspected: [] as Space[],
+  experiment: null as null | {
+    wide: boolean;
+    order: string[];
+    prediction: string;
+  },
+  observation: "",
+  ruledOut: "",
   cited: "",
   diagnosis: "",
   repair: "",
   written: "",
+  reflection: "",
   revised: "",
   verified: false,
   checkedCandidates: false,

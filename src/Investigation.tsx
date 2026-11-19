@@ -13,6 +13,7 @@ import {
 import { extendedSceneCue, sceneCue } from "./scene-cues.ts";
 import { SceneBoundary } from "./SceneBoundary.tsx";
 import type { ExtendedEvent } from "./extended.ts";
+import { decisions, observations } from "./room-decisions.ts";
 import "./investigation.css";
 
 const Viewport = lazy(() =>
@@ -63,7 +64,7 @@ const experiments = {
   "test-room": [
     "Open the Saturday test result",
     "Candidate release · 4 of 5 checks passed",
-    "Saturday application help failed. Hold this release until the visitor sees the corrected reply.",
+    "Four checks passed. The Saturday check failed: the visitor was invited to a suspended service.",
   ],
   security: [
     "Send the page’s request through the permission check",
@@ -103,15 +104,31 @@ export function Investigation({ room }: { room: Space }) {
     }));
   const s = evidence(f),
     trace = incidentTrace(f);
+  const trial = room === "library" ? f.experiment : null;
+  const deskState = trial
+    ? evidence({
+        ...f,
+        strategy: trial.wide ? "current-hybrid" : "hours-only",
+        removed: false,
+      })
+    : s;
+  const orderOnDesk = trial?.order ?? f.order;
+  const observationOptions = observations[f.cited as keyof typeof observations];
+  const supportedObservation =
+    observationOptions?.[f.incident === "cache" ? 1 : 0];
   const cards = [
-    ...f.order.filter((id) => s.retrievalIds.includes(id)),
-    ...s.retrievalIds.filter((id) => !f.order.includes(id)),
+    ...orderOnDesk.filter((id) => deskState.retrievalIds.includes(id)),
+    ...deskState.retrievalIds.filter((id) => !orderOnDesk.includes(id)),
   ];
   const moveUp = (i: number) => {
     if (i < 1) return;
     const order = [...cards];
     [order[i - 1], order[i]] = [order[i], order[i - 1]];
-    update({order}, "Reordered the same " + order.length + " candidates.");
+    if (trial) {
+      update({ experiment: { ...trial, order } });
+      return;
+    }
+    update({ order }, "Reordered the same " + order.length + " candidates.");
   };
   const retrieved = s.retrievalIds.includes(notice),
     selected = s.contextIds.includes(notice);
@@ -124,14 +141,14 @@ export function Investigation({ room }: { room: Space }) {
           : f.repair === "cache"
             ? "INVALIDATE_CACHE"
             : null
-      : f.done.includes(room)
+      : f.inspected.includes(room)
         ? (roomEvents[room] ?? null)
         : null;
   const cue = event
     ? extendedSceneCue(room, event)
-    : room === "library" && retrieved
+    : room === "library" && deskState.retrievalIds.includes(notice)
       ? null
-      : sceneCue(room, s);
+      : sceneCue(room, deskState);
   const next = route[route.indexOf(room) + 1];
   const study = ["briefing", "library", "service-counter"].includes(room)
     ? room + "/1"
@@ -140,13 +157,19 @@ export function Investigation({ room }: { room: Space }) {
     inspect(id);
     update({ first: f.first || id }, passage(id));
   };
-  const search = (wide: boolean) =>
+  const search = (wide: boolean) => {
+    if (trial) {
+      if (!wide || trial.prediction)
+        update({ experiment: { ...trial, wide, order: [] } });
+      return;
+    }
     update(
       { strategy: wide ? "current-hybrid" : "hours-only", order: [] },
       wide
         ? "Wider search found the current notice."
         : "Narrow search missed the current notice.",
     );
+  };
   return (
     <div className="investigation">
       <header>
@@ -189,9 +212,15 @@ export function Investigation({ room }: { room: Space }) {
                       room,
                       cue,
                       noticeInContext:
-                        room === "library" ? retrieved : selected,
+                        room === "library"
+                          ? deskState.retrievalIds.includes(notice)
+                          : selected,
                     }}
-                    desk={room === "library" ? {cards,moveUp,widen:()=>search(true)} : undefined}
+                    desk={
+                      room === "library"
+                        ? { cards, moveUp, widen: () => search(true) }
+                        : undefined
+                    }
                     time={cue?.duration ?? 0}
                     reduced={false}
                   />
@@ -246,7 +275,66 @@ export function Investigation({ room }: { room: Space }) {
             )}
             {room === "library" && (
               <>
-                {depth && <p>Select a desk card to move it up one rank. Select the orange shelf copy to widen the search.</p>}<h3>On the shelf</h3>
+                {trial ? (
+                  <>
+                    <h3>Four-card search experiment</h3>
+                    <p>
+                      Your case folder keeps its original search and answer tray
+                      while you try this separate desk.
+                    </p>
+                    <fieldset>
+                      <legend>What will change if you widen the search?</legend>
+                      {[
+                        "Only the order will change",
+                        "A passage from the shelf can join the results",
+                      ].map((label) => (
+                        <button
+                          key={label}
+                          disabled={trial.wide}
+                          aria-pressed={trial.prediction === label}
+                          onClick={() =>
+                            update({
+                              experiment: { ...trial, prediction: label },
+                            })
+                          }
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </fieldset>
+                    {trial.wide && (
+                      <p>
+                        Your prediction: {trial.prediction}. The wider search
+                        brought the appointment notice onto the desk. Reordering
+                        the four cards kept the same passages.
+                      </p>
+                    )}
+                    <button onClick={() => update({ experiment: null })}>
+                      Return to my carried case
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() =>
+                      update({
+                        experiment: { wide: false, order: [], prediction: "" },
+                      })
+                    }
+                  >
+                    Try the four-card search
+                  </button>
+                )}
+                {depth && (
+                  <p>
+                    Select a desk card to move it up one rank. Select the orange
+                    shelf copy to widen the search
+                    {trial && !trial.prediction
+                      ? " after making your prediction"
+                      : ""}
+                    .
+                  </p>
+                )}
+                <h3>On the shelf</h3>
                 <blockquote>{passage(notice)}</blockquote>
                 <h3>Retrieved for this question</h3>
                 <ol>
@@ -256,33 +344,89 @@ export function Investigation({ room }: { room: Space }) {
                       <button
                         disabled={!i}
                         aria-label={"Move up: " + passage(id)}
-                        onClick={()=>moveUp(i)}
+                        onClick={() => moveUp(i)}
                       >
                         Move up
                       </button>
                     </li>
                   ))}
                 </ol>
-                <button onClick={() => search(false)}>Run narrow search</button>
-                <button onClick={() => search(true)}>Widen search</button>
+                {!trial && (
+                  <button onClick={() => search(false)}>
+                    Run narrow search
+                  </button>
+                )}
+                <button
+                  disabled={!!trial && (!trial.prediction || trial.wide)}
+                  onClick={() => search(true)}
+                >
+                  Widen search
+                </button>
               </>
             )}
             {room !== "briefing" &&
               room !== "library" &&
               room !== "operations" && (
                 <>
-                  <blockquote>
-                    {f.done.includes(room)
-                      ? experiments[room][2]
-                      : experiments[room][1]}
-                  </blockquote>
-                  <button onClick={() => update({}, experiments[room][2])}>
+                  <blockquote>{experiments[room][1]}</blockquote>
+                  <fieldset>
+                    <legend>
+                      {f.inspected.includes(room)
+                        ? "Keep or revise your decision"
+                        : "Choose what you would do"}
+                    </legend>
+                    {decisions[room].map(([label], i) => (
+                      <button
+                        key={label}
+                        aria-pressed={f.choices[room] === i}
+                        onClick={() =>
+                          update(
+                            { choices: { ...f.choices, [room]: i } },
+                            label,
+                          )
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </fieldset>
+                  <button
+                    disabled={f.choices[room] === undefined}
+                    onClick={() =>
+                      update(
+                        { inspected: [...new Set([...f.inspected, room])] },
+                        experiments[room][2],
+                      )
+                    }
+                  >
                     {experiments[room][0]}
                   </button>
+                  {f.inspected.includes(room) && (
+                    <div aria-live="polite">
+                      <blockquote>{experiments[room][2]}</blockquote>
+                      <p>{decisions[room][f.choices[room]!]?.[1]}</p>
+                    </div>
+                  )}
                 </>
               )}
             {room === "operations" && (
               <>
+                {Object.keys(f.choices).length > 0 && (
+                  <details>
+                    <summary>Your decisions before this incident</summary>
+                    <ul>
+                      {Object.entries(decisions).map(([id, options]) => {
+                        const choice = f.choices[id as Space];
+                        return choice === undefined ? null : (
+                          <li key={id}>
+                            <strong>{spaces[id as Space]}</strong> ·{" "}
+                            {options[choice][0]}. {options[choice][1]}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </details>
+                )}
                 <p>Incident report · visitor’s screen before repair</p>
                 <blockquote>{wrong}</blockquote>
                 <fieldset>
@@ -294,7 +438,9 @@ export function Investigation({ room }: { room: Space }) {
                     <button
                       key={id}
                       aria-pressed={f.cited === id}
-                      onClick={() => update({ cited: id, submitted: false })}
+                      onClick={() =>
+                        update({ cited: id, observation: "", submitted: false })
+                      }
                     >
                       {label}
                     </button>
@@ -313,6 +459,40 @@ export function Investigation({ room }: { room: Space }) {
                         "”"}
                   </blockquote>
                 )}
+                {observationOptions && (
+                  <fieldset>
+                    <legend>Which observation does your record support?</legend>
+                    {observationOptions.map((label) => (
+                      <button
+                        key={label}
+                        aria-pressed={f.observation === label}
+                        onClick={() =>
+                          update({ observation: label, submitted: false })
+                        }
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </fieldset>
+                )}
+                <fieldset>
+                  <legend>
+                    Which alternative can you rule out in this two-cause
+                    incident?
+                  </legend>
+                  {[
+                    ["index", "A missing index entry"],
+                    ["cache", "A stale visitor display"],
+                  ].map(([id, label]) => (
+                    <button
+                      key={id}
+                      aria-pressed={f.ruledOut === id}
+                      onClick={() => update({ ruledOut: id, submitted: false })}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </fieldset>
                 <label>
                   Diagnosis{" "}
                   <select
@@ -360,7 +540,16 @@ export function Investigation({ room }: { room: Space }) {
                 </fieldset>
                 {f.repair && (
                   <>
-                    <button onClick={() => update({ checkedCandidates: true }, "After repair: deployed candidates " + (trace.candidates ? "include" : "omit") + " the current notice.")}>
+                    <button
+                      onClick={() =>
+                        update(
+                          { checkedCandidates: true },
+                          "After repair: deployed candidates " +
+                            (trace.candidates ? "include" : "omit") +
+                            " the current notice.",
+                        )
+                      }
+                    >
                       Inspect repaired candidates
                     </button>
                     {f.checkedCandidates && (
@@ -369,14 +558,23 @@ export function Investigation({ room }: { room: Space }) {
                         .
                       </p>
                     )}
-                    <button onClick={() => update({ verified: true }, "After repair, the visitor saw: " + trace.displayed)}>
+                    <button
+                      onClick={() =>
+                        update(
+                          { verified: true },
+                          "After repair, the visitor saw: " + trace.displayed,
+                        )
+                      }
+                    >
                       Check the visitor’s screen
                     </button>
                     {f.verified && <blockquote>{trace.displayed}</blockquote>}
                   </>
                 )}
                 <button
-                  disabled={!f.cited || !f.diagnosis || !f.verified}
+                  disabled={
+                    !f.observation || !f.ruledOut || !f.diagnosis || !f.verified
+                  }
                   onClick={() => update({ submitted: true })}
                 >
                   Score investigation
@@ -385,7 +583,15 @@ export function Investigation({ room }: { room: Space }) {
                   <>
                     <ul>
                       {[
-                        ["Distinguishing evidence", f.cited === f.incident],
+                        [
+                          "Supported observation",
+                          f.observation === supportedObservation,
+                        ],
+                        [
+                          "Alternative ruled out",
+                          f.observation === supportedObservation &&
+                            f.ruledOut !== f.incident,
+                        ],
                         ["Diagnosis", f.diagnosis === f.incident],
                         [
                           "Verified repair",
@@ -399,13 +605,42 @@ export function Investigation({ room }: { room: Space }) {
                       ))}
                     </ul>
                     <p>
+                      Your cited record supports this observation:{" "}
+                      {supportedObservation}
+                    </p>
+                    <p>
                       Your opening decision:{" "}
                       {f.decision || "No decision recorded"}. First record:{" "}
                       {f.first ? passage(f.first) : "None inspected"}. Would you
                       send the original draft now?
                     </p>
-                    {f.written && <><h3>Your explanation</h3><blockquote>{f.written}</blockquote><p>{f.incident === "cache" ? "Compare your explanation with the before-repair replies. The generated answer already contained the suspension, but the visitor received the old invitation." : "Compare your explanation with the deployed candidates. The current notice was available in records but absent from the index results."}</p></>}
-                    <label>What would you tell the visitor now?<textarea value={f.revised} onChange={e=>update({revised:e.target.value})}/></label>
+                    {f.written && (
+                      <>
+                        <h3>Review your explanation</h3>
+                        <blockquote>{f.written}</blockquote>
+                        <p>
+                          {"Read your explanation beside the observation supported by your chosen record: " +
+                            supportedObservation}
+                        </p>
+                        <label>
+                          Which detail in your explanation rules out the other
+                          cause? Revise your reasoning here.
+                          <textarea
+                            value={f.reflection}
+                            onChange={(e) =>
+                              update({ reflection: e.target.value })
+                            }
+                          />
+                        </label>
+                      </>
+                    )}
+                    <label>
+                      What would you tell the visitor now?
+                      <textarea
+                        value={f.revised}
+                        onChange={(e) => update({ revised: e.target.value })}
+                      />
+                    </label>
                     <button
                       onClick={() =>
                         save({
@@ -413,6 +648,9 @@ export function Investigation({ room }: { room: Space }) {
                             f.origin,
                             f.incident === "index" ? "cache" : "index",
                           ),
+                          choices: f.choices,
+                          inspected: f.inspected,
+                          experiment: f.experiment,
                           decision: f.decision,
                           first: f.first,
                           notes: f.notes,
@@ -432,7 +670,9 @@ export function Investigation({ room }: { room: Space }) {
           </section>
           <details open={room !== "briefing" && room !== "operations"}>
             <summary>Case folder</summary>
-            {room === "operations" && <h3>Evidence carried from the training rooms</h3>}
+            {room === "operations" && (
+              <h3>Evidence carried from the training rooms</h3>
+            )}
             <p>
               Current notice · on file →{" "}
               {retrieved ? "retrieved" : "missed by search"} →{" "}
@@ -454,20 +694,22 @@ export function Investigation({ room }: { room: Space }) {
               </a>
             </p>
           )}
-          {room === "library" && !retrieved && (
+          {room === "library" && !trial && !retrieved && (
             <p>
               <a href="#/case/records">
                 Check whether the notice still exists →
               </a>
             </p>
           )}
-          {room === "library" && retrieved && !selected && (
-            <p>
-              <a href="#/case/briefing">
-                Return the retrieved notice to the answer tray →
-              </a>
-            </p>
-          )}
+          {room === "library" && !trial &&
+            retrieved &&
+            !selected && (
+              <p>
+                <a href="#/case/briefing">
+                  Return the retrieved notice to the answer tray →
+                </a>
+              </p>
+            )}
           <footer>
             {next && (
               <a href={"#/case/" + next}>Continue to {spaces[next]} →</a>

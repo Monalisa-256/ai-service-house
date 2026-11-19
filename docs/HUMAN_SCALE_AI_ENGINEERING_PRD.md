@@ -251,3 +251,10 @@ The opening decision and first inspected record travel with the learner. Indepen
 | Operations | Inspect one record, diagnose the incident, apply a repair and verify delivery. |
 
 For beginner observation, start at the briefing desk, follow the folder through the library and finish in operations. Run the same task in flat and spatial views. Record the first unprompted inspection, the learner’s evidence citation and what they check after repair. Repeat with the other incident. Keep authored room studies available for further exploration.
+
+### Evidence and decision review
+
+- In each middle room, choose an action, inspect the relevant record, and keep or revise the decision. Operations displays the latest choice and consequence for each visited room.
+- The four-card experiment uses a separate search desk. Changing its ranking or widening its search preserves the carried case. Predict the outcome before widening in either view.
+- Both incident records can provide evidence. Award separate points for an accurate observation of the cited record, using it to rule out the alternative, the diagnosis, and verifying the repair. Compare the learner’s written explanation with their chosen record and let them revise it.
+- Run `npm run build` and `npm run test:investigation` with Chromium installed to exercise the built app at desktop and mobile viewport sizes. The spatial tests select the desk and shelf meshes. Human observation remains a separate acceptance activity: record a beginner’s first inspection, their explanation of the missing notice, and what they check after repair.

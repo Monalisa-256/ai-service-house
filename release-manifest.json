@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "commit": "143023ab5d980e7e337294437a8dcd44290a0575",
+  "commit": "a6a498b1140c233e38a271257d12238d2f48bfe3",
   "contentVersion": "2026-11-19.ext2",
   "groups": {
     "code": [
@@ -10,7 +10,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "e1f23cd3f9d79db67d5b7f118af4dccacdd1d5ecdbff772ce9e8ad197851038b"
+        "sha256": "04ee7e3d0193d193e0fc604e4f870e021fe205941147e79fa4040d32ec5a5b65"
       },
       {
         "path": "scripts/browser-smoke.mjs",
@@ -23,6 +23,10 @@
       {
         "path": "scripts/inspect_assets.py",
         "sha256": "a74fe164364d3f1cdde67dc698e13f89c5b3654f6ae803bdd585d63b7523e939"
+      },
+      {
+        "path": "scripts/investigation-smoke.mjs",
+        "sha256": "a356ea8f8a48e06719dd9b91a00ad74a8096d8b29cb9c564e34f5bc92575fed5"
       },
       {
         "path": "scripts/make_rooms.py",
@@ -74,7 +78,7 @@
       },
       {
         "path": "src/Investigation.tsx",
-        "sha256": "458c0e5db90ed75adc22652e11afa145de89e077c5074ce3eb983efc12d54d75"
+        "sha256": "c2f1bd8d2ce06977fb553b30e904ef93ea0f6760c065c6eed224393fd797a543"
       },
       {
         "path": "src/PlatformDrawer.tsx",
@@ -114,7 +118,7 @@
       },
       {
         "path": "src/investigation.ts",
-        "sha256": "63b2ccbce3cca776a5e65c7c6de1e976f9a82f5c80d7eab2fcf78b521146e77c"
+        "sha256": "4bb9ee55b1e708f636d43cfe5c168cad99e9a58bae566f0d07613a16d4b0e95c"
       },
       {
         "path": "src/lesson-player.css",
@@ -135,6 +139,10 @@
       {
         "path": "src/public-content.ts",
         "sha256": "0539d9d0c98de10e17326f04c6f41682f5f16ca63ff9f2fce0eafe7f4f42dd0a"
+      },
+      {
+        "path": "src/room-decisions.ts",
+        "sha256": "63a1378fe952a04d62517b007ea5ca2915297bca3ef011c4d697a44cb9a3dc0b"
       },
       {
         "path": "src/scenario.ts",
@@ -210,7 +218,7 @@
       },
       {
         "path": "test/investigation-ui.test.tsx",
-        "sha256": "80bf7c0a01c3f07cbc5be26daa1782ddcbbc03eaa5c861bf38f43cdfdce932c5"
+        "sha256": "be645bed46e7901cc9ef5487351a30ea2237084e700aa64effb0384fc7e224a6"
       },
       {
         "path": "test/investigation.test.ts",
@@ -492,7 +500,7 @@
       },
       {
         "path": "docs/HUMAN_SCALE_AI_ENGINEERING_PRD.md",
-        "sha256": "5b1e57b754ae8d01bec3b17d67a7ec79a0ec65dabb18a6e321fcbc126c689012"
+        "sha256": "873d48c4af7546a8191f1e4ff1f10af475b6047a23b04de66914d6a391a2980b"
       },
       {
         "path": "docs/LEARNING_OBJECTIVES.md",

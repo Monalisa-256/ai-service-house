@@ -41,6 +41,22 @@ test.each(["index", "cache"] as const)(
           : "Generated and displayed replies",
       ),
     );
+    await user.click(
+      screen.getByRole("button", {
+        name:
+          cause === "index"
+            ? "The deployed candidates omit the current notice."
+            : "The generated reply corrects the invitation, but the display still shows it.",
+      }),
+    );
+    await user.click(
+      screen.getByRole("button", {
+        name:
+          cause === "index"
+            ? "A stale visitor display"
+            : "A missing index entry",
+      }),
+    );
     await user.selectOptions(screen.getByRole("combobox"), cause);
     await user.click(
       screen.getByText(
@@ -55,6 +71,8 @@ test.each(["index", "cache"] as const)(
     expect(screen.getByText("Verified repair: 1 / 1")).toBeTruthy();
     cleanup();
     render(<Investigation room="operations" />);
-    expect(screen.getByText(/After repair, the visitor saw: Reception is open/)).toBeTruthy();
+    expect(
+      screen.getByText(/After repair, the visitor saw: Reception is open/),
+    ).toBeTruthy();
   },
 );

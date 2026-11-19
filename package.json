@@ -11,6 +11,7 @@
     "test": "node --test test/*.test.ts",
     "inspect": "node src/inspect.ts",
     "check": "npm run validate && npm test && npm run build && npm run test:ui",
+    "test:investigation": "node scripts/investigation-smoke.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
     "test:ui": "vitest run test/*.test.tsx",
     "sync:public": "node src/public-content.ts --write",
