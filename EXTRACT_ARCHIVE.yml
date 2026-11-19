@@ -1,0 +1,89 @@
+name: Extract project archive
+
+on:
+  push:
+    paths:
+      - phase1.zip
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: extract-project-archive
+  cancel-in-progress: false
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Check archive exists
+        id: archive
+        run: |
+          if [ -f phase1.zip ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate and extract ZIP
+        if: steps.archive.outputs.present == 'true'
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path, PurePosixPath
+          from zipfile import ZipFile
+
+          archive = Path('phase1.zip')
+          root = Path.cwd().resolve()
+          seen = set()
+          with ZipFile(archive) as z:
+              entries = z.infolist()
+              if not entries:
+                  raise SystemExit('Archive is empty')
+              for info in entries:
+                  name = info.filename
+                  path = PurePosixPath(name)
+                  parts = path.parts
+                  if (name.startswith('/') or '\\' in name or not parts or
+                      any(part in ('', '.', '..') for part in parts) or
+                      any(part in ('.git', '.github') for part in parts) or
+                      name == 'phase1.zip'):
+                      raise SystemExit(f'Unsafe archive path: {name}')
+                  if name in seen:
+                      raise SystemExit(f'Duplicate archive entry: {name}')
+                  seen.add(name)
+                  mode = (info.external_attr >> 16) & 0o170000
+                  if mode == 0o120000:
+                      raise SystemExit(f'Symlink not allowed: {name}')
+                  target = (root / name).resolve()
+                  if not target.is_relative_to(root):
+                      raise SystemExit(f'Path escapes repository: {name}')
+              for info in entries:
+                  target = root / info.filename
+                  if info.is_dir():
+                      target.mkdir(parents=True, exist_ok=True)
+                  else:
+                      target.parent.mkdir(parents=True, exist_ok=True)
+                      target.write_bytes(z.read(info))
+          archive.unlink()
+          PY
+
+      - name: Commit extracted project
+        if: steps.archive.outputs.present == 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Extract project archive"
+            git push
+          fi
