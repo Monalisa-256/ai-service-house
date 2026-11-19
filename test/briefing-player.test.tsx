@@ -41,6 +41,8 @@ test('lesson preserves route on skip, offers reduced motion, and checks explanat
   expect(screen.getByRole('button', { name: 'Reduced motion on' }).getAttribute('aria-pressed')).toBe('true');
   expect(screen.getByRole('slider', { name: 'Motion position' }).hasAttribute('disabled')).toBe(true);
   view.rerender(<BriefingLessonPlayer step={5}/>);
+  expect(screen.getByRole('region', { name: 'Answer comparison' }).textContent).toContain('NOTICE REMOVED · UNVERIFIED');
+  expect(screen.getByRole('region', { name: 'Answer comparison' }).textContent).toContain('Booking: not booked');
   await user.click(screen.getByRole('radio', { name: /removed from this answer’s context/ }));
   expect(screen.getByText(/Correct. The record remains current/)).toBeTruthy();
   expect(screen.getByRole('img').getAttribute('aria-label')).toContain('not booked');

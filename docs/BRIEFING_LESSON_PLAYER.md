@@ -17,10 +17,18 @@ The first room is a focused visual lesson at `#/briefing/1` through `#/briefing/
 ## Interaction and access
 
 - Replay, Pause/Play, Skip motion, and a range scrubber change only the illustration. The reduced-motion control stores a preference and presents completed static poses.
+- Each step has an optional browser speech narration. It starts only after Play, exposes Pause, Resume, Stop, and speed, and cancels when the step changes or the player unmounts. The complete script is visible in an expanded transcript. Narration is independent of animation timing and never advances the case. Voice availability and pronunciation vary by browser and device; the site provides no recorded or generated audio file.
 - The evidence drawer presents the exact public passage, selected-context status, claim support, and booking status. It does not receive staff-only fixture text. Escape closes it, Tab stays inside it, and focus returns to its trigger.
 - Prediction before the removal and a final explanation check require the learner to distinguish a missing selected passage from a deleted record.
 - The skip button moves focus to the guide without changing the hash route. The diagram has a full text alternative; status and controls remain semantic HTML.
 - Visited steps persist locally. The content and results are fictional; no analytics service or external booking tool is used.
+- Step five presents the two exact derived answer texts side by side, with claim and booking labels, so the promised comparison is directly inspectable.
+
+## Audio research decisions
+
+The Web Speech API provides `speak`, `pause`, `resume`, `cancel`, utterance events, and speech-rate controls. Speech synthesis voices are selected by the browser and platform; a failed or unsupported speech service leaves the transcript and lesson usable. We do not autoplay audio. W3C guidance calls for text alternatives and controls for audio; the visible script and independent Play/Stop controls are the baseline here. Browser voice quality, pronunciation, and interaction with screen readers need device review before claiming an accessible audio experience.
+
+Sources reviewed 19 November 2026: [MDN SpeechSynthesis](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis), [MDN SpeechSynthesisUtterance](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesisUtterance), [W3C WAI planning audio and video](https://www.w3.org/WAI/media/av/planning/), [W3C WAI audio control](https://www.w3.org/WAI/WCAG22/Understanding/audio-control.html).
 
 ## Verification and remaining gate
 

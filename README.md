@@ -1,6 +1,6 @@
 # The AI Service House
 
-**Experience direction update:** The briefing desk now opens as a five-step visual lesson player with a central human-scale diagram, step guide, status, timeline, exact evidence drawer, and motion controls. [Read the reference audit and redesigned lesson-player contract](docs/EXPERIENCE_REDEFINITION.md). The other seven spaces retain their earlier workbench presentation while their visual lessons are authored.
+**Experience direction update:** The briefing desk now opens as a five-step visual lesson player with a central human-scale diagram, step guide, status, timeline, exact evidence drawer, answer comparison, optional spoken narration, and motion controls. [Read the reference audit and redesigned lesson-player contract](docs/EXPERIENCE_REDEFINITION.md). The other seven spaces retain their earlier workbench presentation while their visual lessons are authored.
 
 A human-scale educational simulation of how an AI service answer depends on context, retrieval, tool evidence, source quality, application delivery, evaluation, security, and operations. The first three rooms have animated human-scale 3D scenes and complete HTML evidence. Five further studies have controlled 2D interventions, replay, assessments, and optional concept cards. The Riverside center, documents, visitor, dates, and calendar are fictional. No appointment can be booked.
 
