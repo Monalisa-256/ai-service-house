@@ -110,4 +110,4 @@ The critical path is **product contract → canonical fixtures/rules → 2D caus
 
 At each phase gate, present: a working artifact or exact content fixture, the relevant state/event trace, a 2D and 3D comparison where applicable, accessibility findings, device measurements when relevant, unresolved risks, and a decision to proceed or revise. This avoids treating a visual demo as proof of educational correctness.
 
-**Immediate next task:** publish the updated Phase 1/2 package, run the browser and assistive-technology checks, observe the three representative learner reviews, revise copy and sequence from findings, then make the Phase 3 art decision. Do not treat the learner review as completed by automated tests.
+**Immediate next task:** review the optional three-room 3D prototype on modest phone and laptop hardware, run browser and assistive-technology checks, observe learners, revise the visual and wording from findings, and then decide whether to scale the art kit. Phase 5 core content and optional inspection drafts require educator and technical review before five-room production.

@@ -2,7 +2,7 @@
 
 ## Scope and evidence
 
-Reviewed the local source, Saturday specification, phase gates, content validator, event/session engine, three-room React UI, production output, and the connected public GitHub repository `Monalisa-256/ai-service-house`. The local source is ahead of GitHub. The GitHub `main` head observed during this audit was `f12fa3ddb1e198079ca9eb0113935fb0ad597198`; its README still described Phase 1 only, and `index.html` returned 404. The existing `.github/workflows/extract.yml` listens for root-level `phase1.zip` and removes the archive after extracting it. This audit does not claim the updated ZIP has been uploaded.
+Reviewed the local source, Saturday specification, phase gates, content validator, event/session engine, three-room React UI, production output, and the connected public GitHub repository `Monalisa-256/ai-service-house`. At the original audit, GitHub contained Phase 1 only. The later archive extraction succeeded: GitHub `main` head observed for this review was `83a976b99763f2c7bbc693ab82616533e78ca92c`, with `index.html` and the Phase 2 package present. The updated `.github/workflows/extract.yml` listens for any root-level `*.zip` and removes the archive after extracting it. The changes in this new package remain local until its ZIP is uploaded.
 
 ## Findings resolved in this package
 
@@ -27,6 +27,6 @@ Changing the content fixture incremented `contentVersion` to `2026-11-19.3`, so 
 | Phase 2 keyboard and screen-reader path | Implemented, manual check open | Native radio/buttons/links/details, heading focus, live status, skip link, visible focus, reduced-motion toggle. Test with actual screen readers and mobile devices. |
 | Phase 2 rendered-browser verification | Open | Browser smoke script exists; Chromium launch was denied by this workspace sandbox before any page opened. Run `npm run dev` then `npm run test:browser` on a normal Chromium machine. |
 | Phase 2 observed learner review and copy revision | Open | Recruit representative novice phone, laptop, and keyboard/screen-reader learners; use the script in `PHASE_2_IMPLEMENTATION.md`. Do not claim observed feedback without sessions. |
-| GitHub publication | Open | Upload the root-level `phase1.zip` to the public repo; the existing workflow extracts it. Verify `index.html`, updated README, and `npm run check` on `main`. |
+| GitHub publication | Open | Upload the new root-level ZIP to the public repo; the updated workflow accepts any ZIP name. Verify the new traceability document, updated UI, and `npm run check` on `main`. |
 
 No 3D production should expand until the observed learner and assistive-technology reviews have addressed misunderstandings. The open checks require human participation or a browser environment; they cannot be completed by static code review.

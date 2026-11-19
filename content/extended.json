@@ -1,0 +1,98 @@
+{
+  "schemaVersion": "1",
+  "scenarioId": "riverside-saturday-001",
+  "contentVersion": "2026-11-19.ext1",
+  "fictionalDate": "2026-11-19",
+  "targetDate": "2026-11-21",
+  "sourceRefs": ["doc-hours-v1", "doc-service-v1", "doc-notice-v1", "doc-notice-v2", "doc-rota-v1", "doc-poisoned-v1"],
+  "newFixtures": [
+    { "id": "cache-entry-v1", "kind": "cache", "published": "2026-11-18", "text": "Reception is open Saturday 09:00–12:00. An earlier schedule said application-help appointments were planned, subject to slots.", "sourceId": "doc-notice-v1", "status": "stale" },
+    { "id": "cache-entry-v2", "kind": "cache", "published": "2026-11-19", "text": "Reception is open Saturday 09:00–12:00 for general information. Application-help appointments are suspended that day.", "sourceId": "doc-notice-v2", "status": "current" },
+    { "id": "index-bundle-current", "kind": "index", "published": "2026-11-19", "text": "Public effective passages include p-notice-1 and p-notice-2 for 21 November.", "sourceId": "doc-notice-v2", "status": "current" },
+    { "id": "index-bundle-stale", "kind": "index", "published": "2026-11-19", "text": "The deployed candidate bundle omits p-notice-1 and p-notice-2 while retaining public hours passages.", "sourceId": "doc-hours-v1", "status": "incident" },
+    { "id": "eval-suite-v1", "kind": "evaluation", "published": "2026-11-19", "text": "Five fictional cases, including one critical dated Saturday appointment case. Baseline passes 3/5; candidate passes 4/5 but fails the critical Saturday case.", "sourceId": "doc-notice-v2", "status": "fixture" }
+  ],
+  "evaluationCases": [
+    { "id": "eval-weekday-hours", "slice": "routine", "expected": "weekday_hours", "baselinePass": true, "candidatePass": true },
+    { "id": "eval-saturday-reception", "slice": "routine", "expected": "reception_open", "baselinePass": true, "candidatePass": true },
+    { "id": "eval-appointment-rule", "slice": "routine", "expected": "appointment_required", "baselinePass": false, "candidatePass": true },
+    { "id": "eval-next-step", "slice": "routine", "expected": "offer_other_date", "baselinePass": false, "candidatePass": true },
+    { "id": "eval-saturday-suspension", "slice": "critical_saturday", "expected": "suspended_not_booked", "baselinePass": true, "candidatePass": false }
+  ],
+  "rooms": [
+    {
+      "id": "records", "title": "Records room", "objective": "Separate provenance, version, effective date, quality labels, and public eligibility.",
+      "core": { "question": "Which notice can establish application-help availability on 21 November?", "reference": "An earlier planned-session notice is superseded; opening hours alone are not enough.", "action": "ACTIVATE_CURRENT_NOTICE", "result": "The current dated notice is eligible and establishes suspension while reception remains open.", "cause": "Source version and effective scope change the eligible evidence before retrieval." },
+      "fixtures": ["doc-notice-v1", "doc-notice-v2", "doc-hours-v1"],
+      "humanAction": "A records worker stamps the older notice superseded and places the current dated notice on the public shelf.",
+      "equivalent2D": "A version table with published/effective dates, audience, status, exact passages, and a before/after eligibility row.",
+      "narration": "More pages do not make an old schedule current. The effective notice controls this date.",
+      "caption": "Earlier notice: superseded. Current notice: effective for Saturday, 21 November.",
+      "assessment": { "prompt": "Why can many copies of the old notice still fail the Saturday question?", "options": ["More copies outweigh dates", "Copies do not change provenance or current effective status"], "correct": 1, "rationale": "Quantity cannot replace the current dated source." },
+      "optional": ["sampling", "cleaning", "deduplication", "label disagreement", "coverage", "accuracy", "freshness", "completeness", "consistency", "privacy", "retention", "development and held-out splits", "evaluation contamination"]
+    },
+    {
+      "id": "workshop", "title": "Experience workshop", "objective": "Diagnose a fast but stale user-facing answer and define cache freshness scope.",
+      "core": { "question": "Can a fast cached answer ignore a changed notice?", "reference": "The current notice and cache entry v2 both report suspension.", "action": "SERVE_STALE_CACHE", "result": "A v1 answer appears quickly but refers to the superseded plan; it is marked stale and unsupported.", "cause": "A cache key that omits source version can reuse an answer after the notice changes." },
+      "fixtures": ["cache-entry-v1", "cache-entry-v2", "doc-notice-v1", "doc-notice-v2"],
+      "humanAction": "A workshop worker compares two dated response cards on an ordinary service kiosk.",
+      "equivalent2D": "Side-by-side current source and cached answer with version, status, freshness condition, and timing labels marked illustrative.",
+      "narration": "The answer arrives quickly because it was reused. Speed does not make its schedule current.",
+      "caption": "Cached v1 answer: stale after v2 notice. Refresh by source-version key or invalidation.",
+      "assessment": { "prompt": "What should invalidate this cached answer?", "options": ["A changed effective source version", "Only a different font or animation"], "correct": 0, "rationale": "The answer depends on the notice version, so freshness must include that dependency." },
+      "optional": ["API contracts", "streaming feedback", "latency distribution", "cost per request", "concurrency", "rate limits", "retries", "fallback states", "access-scoped caching", "reliability"]
+    },
+    {
+      "id": "test-room", "title": "Test room", "objective": "Read per-case results and find a critical regression hidden by an aggregate gain.",
+      "core": { "question": "Is the candidate safer because it passes more cases overall?", "reference": "Baseline passes three of five cases, including the critical Saturday suspension case.", "action": "RUN_CANDIDATE_EVAL", "result": "Candidate passes four of five but fails the critical Saturday case.", "cause": "An aggregate increase masks a failure in the dated high-impact slice; release criteria must inspect that slice." },
+      "fixtures": ["eval-suite-v1", "doc-notice-v2"],
+      "humanAction": "A reviewer lays five case cards on a table and marks each outcome against a written rubric.",
+      "equivalent2D": "Accessible table with five case IDs, expected properties, baseline and candidate results, slice label, and release decision.",
+      "narration": "Four out of five is larger than three out of five, but the candidate loses the case we cannot afford to miss.",
+      "caption": "Aggregate: 3/5 → 4/5. Critical Saturday slice: pass → fail. Hold release.",
+      "assessment": { "prompt": "Which evidence should block release?", "options": ["Only the aggregate improvement", "The critical Saturday regression and its trace"], "correct": 1, "rationale": "A defined critical slice can be a release gate even when aggregate accuracy rises." },
+      "optional": ["rubric construction", "human adjudication", "grader calibration", "retrieval recall", "claim support", "tool correctness", "failure taxonomy", "red-team cases", "dataset leakage", "sample-size context"]
+    },
+    {
+      "id": "security", "title": "Security checkpoint", "objective": "Locate the lower-trust instruction and the application access gate that prevents disclosure.",
+      "core": { "question": "Can an external page order the assistant to reveal a staff-only rota?", "reference": "A public-role request can inspect only eligible public sources.", "action": "INJECT_HOSTILE_SOURCE", "result": "The hostile line is treated as untrusted source text; the staff rota remains inaccessible.", "cause": "Document eligibility and tool authorization are application checks, not permissions granted by source text." },
+      "fixtures": ["doc-poisoned-v1", "doc-rota-v1"],
+      "humanAction": "A security worker labels an external copy untrusted and keeps the staff cabinet closed.",
+      "equivalent2D": "Trust-boundary diagram with source text, attempted instruction, public role, denied access result, and no rota body.",
+      "narration": "The page can contain words that look like instructions. It cannot grant access to staff records.",
+      "caption": "External source: lower trust. Public role: no staff-read permission. Result: denied.",
+      "assessment": { "prompt": "What enforces the boundary here?", "options": ["The page promising to behave", "Application eligibility and permission checks"], "correct": 1, "rationale": "A prompt alone cannot make a restricted document safe to retrieve." },
+      "optional": ["prompt injection entry points", "least privilege", "authentication versus authorization", "output validation", "abuse limits", "secrets", "retention", "audit logs", "incident escalation"]
+    },
+    {
+      "id": "operations", "title": "Operations room", "objective": "Trace a versioned retrieval incident through detection, containment, repair, and affected-slice verification.",
+      "core": { "question": "Why did wrong Saturday answers rise although the notice itself was current?", "reference": "Current index bundle includes the effective notice.", "action": "DEPLOY_STALE_INDEX", "result": "The deployed index omits the notice; Saturday appointment status becomes unverified and an affected-slice alert fires.", "cause": "The deployed index version, not the source record, removed the decisive candidate." },
+      "fixtures": ["index-bundle-current", "index-bundle-stale", "doc-notice-v2", "eval-suite-v1"],
+      "humanAction": "An operator compares version cards, pins an incident note, restores the current index, and checks the Saturday cases.",
+      "equivalent2D": "Trace table source → index → candidates → answer, incident timeline, rollback control, and affected-slice verification result.",
+      "narration": "The notice did not disappear from records. The deployed index omitted it; recovery must verify the affected questions.",
+      "caption": "Index mismatch detected. Contain, restore current bundle, verify Saturday slice.",
+      "assessment": { "prompt": "What proves the index repair worked?", "options": ["The deploy command finished", "The current notice is retrieved and the affected Saturday cases pass"], "correct": 1, "rationale": "A successful deployment is not proof that the user-facing failure is repaired." },
+      "optional": ["versioned traces", "quality and latency metrics", "feedback triage", "source drift", "index drift", "rollout stages", "rollback", "incident roles", "post-incident review", "cost monitoring"]
+    }
+  ],
+  "dependencyRules": [
+    { "from": "ACTIVATE_CURRENT_NOTICE", "to": "eligible source → retrieved candidate → supported claim", "interaction": "A stale deployed index can still omit the current record." },
+    { "from": "SERVE_STALE_CACHE", "to": "displayed answer", "interaction": "The stale display can mask a corrected source or index until invalidated." },
+    { "from": "RUN_CANDIDATE_EVAL", "to": "release decision", "interaction": "A critical slice failure blocks release despite aggregate gain." },
+    { "from": "INJECT_HOSTILE_SOURCE", "to": "access decision", "interaction": "A public role remains denied regardless of retrieved external instructions." },
+    { "from": "DEPLOY_STALE_INDEX", "to": "retrieved candidate → supported claim → alert", "interaction": "A current record remains in storage while the deployed index omits it." }
+  ],
+  "finalChallenge": {
+    "prompt": "A visitor is told an application-help visit can be booked this Saturday. Reception is open, but the current notice says sessions are suspended. The deployed index lacks that notice and a cached answer references the older plan. Diagnose the layers and the action status.",
+    "required": ["reception is open only for general information", "current notice suspends application-help sessions", "deployed index omitted the decisive candidate", "stale cache reused an old answer", "no booking confirmation exists", "repair index and invalidate cache", "verify dated Saturday slice"],
+    "rubric": [
+      { "id": "scope", "points": 2, "criterion": "Separates reception hours from application-help appointment status." },
+      { "id": "evidence", "points": 2, "criterion": "Identifies current notice and missing index candidate, with the right causal order." },
+      { "id": "cache", "points": 1, "criterion": "Names stale cache as a second display-layer cause." },
+      { "id": "action", "points": 2, "criterion": "States no confirmed booking and distinguishes lookup/proposal/write." },
+      { "id": "recovery", "points": 2, "criterion": "Restores current index, invalidates dependent cache, and verifies the affected slice." }
+    ],
+    "maxPoints": 9
+  }
+}

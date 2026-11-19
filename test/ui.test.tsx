@@ -15,6 +15,7 @@ test('guided rooms retain the case, identify evidence, and distinguish proposal 
   await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
   expect(screen.getByText('The status becomes unverified.')).toBeTruthy();
   expect(screen.getByText('DECISIVE PASSAGE')).toBeTruthy();
+  expect(screen.getByText(/SUPERSEDED — INELIGIBLE/)).toBeTruthy();
   await user.click(screen.getByRole('link', { name: /The library/ }));
   await user.click(screen.getByRole('radio', { name: /No, the notice is not in the candidate set/ }));
   await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
@@ -47,4 +48,33 @@ test('native controls, status, replay, and reduced motion are available', async 
   expect(screen.getByText('Current notice reaches the answer.')).toBeTruthy();
   await user.click(screen.getByRole('button', { name: /Open experiment fork/ }));
   expect(screen.getByRole('button', { name: /Restore notice to context/ })).toBeTruthy();
+});
+
+test('skip link preserves a room route and saved runs survive a remount', async () => {
+  const user = userEvent.setup();
+  const first = render(<App />);
+  await user.click(screen.getByRole('link', { name: /The library/ }));
+  expect(location.hash).toBe('#/library');
+  await user.click(screen.getByRole('link', { name: 'Skip to lesson' }));
+  expect(location.hash).toBe('#/library');
+  expect(document.activeElement?.tagName).toBe('MAIN');
+  await user.click(screen.getByRole('radio', { name: /No, the notice is not in the candidate set/ }));
+  await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
+  first.unmount();
+  render(<App />);
+  expect(screen.getByText('The notice cannot be reranked.')).toBeTruthy();
+  await user.click(screen.getByRole('button', { name: 'Clear saved case' }));
+  expect(screen.queryByText('The notice cannot be reranked.')).toBeNull();
+});
+
+test('post-reveal check gives causal feedback and records progress', async () => {
+  const user = userEvent.setup();
+  render(<App />);
+  await user.click(screen.getByRole('radio', { name: /Availability is unverified from this context/ }));
+  await user.click(screen.getByRole('button', { name: /Reveal the change/ }));
+  await user.click(screen.getByRole('radio', { name: /The record alone supports the answer/ }));
+  expect(screen.getByText(/this answer did not receive it/)).toBeTruthy();
+  await user.click(screen.getByRole('radio', { name: /selected context needs the notice/ }));
+  expect(screen.getByText(/Correct. The explanation depends/)).toBeTruthy();
+  expect(localStorage.getItem('service-house-phase2-v1')).toContain('"review":"context"');
 });

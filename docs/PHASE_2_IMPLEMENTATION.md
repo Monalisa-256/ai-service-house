@@ -18,14 +18,14 @@ The counter reference lookup and one proposal are preloaded as the scene's fixtu
 
 ## Information and interaction architecture
 
-- The left route rail provides three permanent spaces. A route change does not reset the other rooms.
+- The left route rail provides three permanent spaces and marks a room after its learning check is answered correctly. A route change does not reset the other rooms.
 - The persistent question banner anchors the same case in every room.
 - Prediction choices use a native radio group. Revealing is disabled until a choice is recorded. After reveal, the choice freezes and the explanatory feedback appears.
 - Before/after cards show the status, whether the decisive notice is in context, and the immutable `Not booked` state. The process list shows the intermediate stage. The trace explanation names the causal reason.
-- The browser imports `content/saturday-public.json`, a checked projection that excludes staff-only and external document bodies. The production bundle is scanned for restricted fixture markers. The source panel quotes exact eligible passages, with separate labels for `IN CONTEXT`, `CANDIDATE ONLY`, and `NOT RETRIEVED`. It highlights the decisive suspension sentence and explicitly tests an invalid hours citation.
-- The tool panel shows requested date, simulated response, returned options, proposed time, and booking. It is visible in every room to preserve the distinction.
+- The browser imports `content/saturday-public.json`, a checked projection that excludes staff-only and external document bodies. The production bundle is scanned for restricted fixture markers. The optional task-brief inspector separates the authorized instruction from response fields. The source panel quotes exact eligible passages, with separate labels for `IN CONTEXT`, `CANDIDATE ONLY`, and `NOT RETRIEVED`. It highlights the decisive suspension sentence and explicitly tests an invalid hours citation.
+- The tool panel shows the exact read-only request and checked time, requested date, simulated response, returned options, proposed time, and booking. It is visible in every room to preserve the distinction.
 - Replay displays stored snapshots without mutating the run. Reset rebuilds the reference fixture for that room. Local storage persists each room's validated run and prediction; imported snapshots are recomputed from trusted content.
-- The observation log records route, prediction, intervention, replay, reset, fork, and preference actions with sequence numbers. It is ephemeral and contains no visitor name, address, or external analytics identifier.
+- A compact in-site glossary defines the terms learners need for these three rooms. The observation log records route, prediction, post-reveal learning check, intervention, replay, reset, fork, and preference actions with sequence numbers. It is ephemeral and contains no visitor name, address, or external analytics identifier.
 
 ## Research grounding
 
@@ -39,7 +39,7 @@ Manual verification still needs a screen reader pass in at least one desktop bro
 
 ## Verification status
 
-The content validator, 16 deterministic engine tests, two interaction tests in jsdom, public-content and bundle checks, strict TypeScript check, and Vite production build pass. A Playwright Core browser smoke script covers all three routes, persistence, replay, reset, and mobile overflow; Chromium could not launch inside this restricted workspace because process socket creation was denied. Run it in a normal Chromium environment with `npm run dev` running. The jsdom tests exercise prediction, all three routes, retained state, reset, replay, status text, and motion toggle. No visual/browser or screen-reader pass is claimed here.
+The content validator, 16 deterministic engine tests, four interaction tests in jsdom, public-content and bundle checks, strict TypeScript check, and Vite production build pass. A Playwright Core browser smoke script covers all three routes, persistence, replay, reset, and mobile overflow; Chromium could not launch inside this restricted workspace because process socket creation was denied. Run it in a normal Chromium environment with `npm run dev` running. The jsdom tests exercise prediction, all three routes, retained state, reset and clear, skip-link route preservation, replay, learning feedback, status text, and motion toggle. No visual/browser or screen-reader pass is claimed here.
 
 ## Small observed learner review — required before expanding 3D
 

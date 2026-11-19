@@ -1,34 +1,39 @@
 {
   "name": "ai-service-house",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "npm run verify:public && tsc --noEmit && vite build && node src/verify-bundle.ts",
     "preview": "vite preview --host 0.0.0.0",
-    "validate": "node src/validate.ts",
+    "validate": "node src/validate.ts && node src/validate-extended.ts",
     "test": "node --test test/*.test.ts",
     "inspect": "node src/inspect.ts",
     "check": "npm run validate && npm test && npm run build && npm run test:ui",
     "test:browser": "node scripts/browser-smoke.mjs",
     "test:ui": "vitest run test/ui.test.tsx",
     "sync:public": "node src/public-content.ts --write",
-    "verify:public": "node src/public-content.ts"
+    "verify:public": "node src/public-content.ts",
+    "inspect:assets": "python3 scripts/inspect_assets.py"
   },
   "engines": {
     "node": ">=22.18"
   },
   "dependencies": {
+    "@react-three/fiber": "^9.8.2",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "three": "^0.187.0"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.13",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.187.0",
     "jsdom": "^31.0.1",
     "playwright-core": "^1.65.1",
     "typescript": "^7.0.2",

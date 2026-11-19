@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1",
+  "generator": "Blender 4.3.2 + glTF Transform 4.5.1",
+  "rooms": {
+    "briefing": {
+      "optimized": "/models/briefing.glb",
+      "sha256": "c3b271d3d06c66a2f9137f0e9bc60c7ff632473bc2a47b2a01a83b0b6a49ab0b",
+      "rawBytes": 97196,
+      "optimizedBytes": 50884,
+      "savingPercent": 47.6,
+      "blenderBytes": 928956,
+      "nodes": 42,
+      "meshes": 33,
+      "triangles": 556,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "ReceiveQuestion",
+        "PlaceNotice",
+        "RemoveNotice"
+      ],
+      "clipDurationsSeconds": {
+        "ReceiveQuestion": 1.708,
+        "PlaceNotice": 1.708,
+        "RemoveNotice": 1.708
+      }
+    },
+    "library": {
+      "optimized": "/models/library.glb",
+      "sha256": "dd6be4ff038474ce2936e862ccdf7641d66edbc0e2ba11dc77651a2e2a7772b5",
+      "rawBytes": 182120,
+      "optimizedBytes": 55768,
+      "savingPercent": 69.4,
+      "blenderBytes": 1525872,
+      "nodes": 107,
+      "meshes": 41,
+      "triangles": 652,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "SearchNarrow"
+      ],
+      "clipDurationsSeconds": {
+        "SearchNarrow": 1.708
+      }
+    },
+    "service-counter": {
+      "optimized": "/models/service-counter.glb",
+      "sha256": "ff04b907a76cd4efcc09a1049f0099a31c51674f31d97ed2ec78014d276dcad0",
+      "rawBytes": 86356,
+      "optimizedBytes": 45356,
+      "savingPercent": 47.5,
+      "blenderBytes": 1395000,
+      "nodes": 45,
+      "meshes": 36,
+      "triangles": 592,
+      "skins": 1,
+      "materials": 10,
+      "textures": 0,
+      "clips": [
+        "CalendarTimeout"
+      ],
+      "clipDurationsSeconds": {
+        "CalendarTimeout": 1.708
+      }
+    }
+  }
+}
