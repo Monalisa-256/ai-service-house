@@ -11,6 +11,12 @@ try {
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('http://127.0.0.1:5173/#/briefing');
   await page.getByRole('heading', { name: 'The briefing' }).waitFor();
+  await page.getByRole('button', { name: 'Show 3D view' }).click();
+  await page.locator('canvas, .scene-fallback').first().waitFor();
+  assert.match(await page.locator('.lesson-grid').innerText(), /Evidence trail/);
+  await page.getByRole('button', { name: 'Motion: standard' }).click();
+  assert.match(await page.locator('.scene-controls').innerText(), /static scene/);
+  await page.getByRole('button', { name: 'Hide 3D view' }).click();
   await page.getByRole('radio', { name: /Availability is unverified/ }).check();
   await page.getByRole('button', { name: /Reveal the change/ }).click();
   await page.getByText('The status becomes unverified.').waitFor();
@@ -36,6 +42,8 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
   await mobile.goto('http://127.0.0.1:5173/#/library');
   await mobile.getByRole('heading', { name: 'The library' }).waitFor();
+  await mobile.getByRole('button', { name: 'Show 3D view' }).click();
+  await mobile.locator('canvas, .scene-fallback').first().waitFor();
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   await mobile.screenshot({ path: join(artifactDir, 'phase2-mobile.png'), fullPage: true });
   console.log('Browser smoke passed: three routes, guided changes, persistence, replay, reset, mobile width, no runtime errors.');

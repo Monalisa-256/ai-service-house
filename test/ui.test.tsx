@@ -78,3 +78,13 @@ test('post-reveal check gives causal feedback and records progress', async () =>
   expect(screen.getByText(/Correct. The explanation depends/)).toBeTruthy();
   expect(localStorage.getItem('service-house-phase2-v1')).toContain('"review":"context"');
 });
+
+test('a saved reduced-motion preference prevents motion even when a 3D view is requested', async () => {
+  localStorage.setItem('service-house-reduced-motion', 'true');
+  const user = userEvent.setup();
+  render(<App />);
+  expect(screen.getByRole('button', { name: 'Motion: reduced' }).getAttribute('aria-pressed')).toBe('true');
+  await user.click(screen.getByRole('button', { name: 'Show 3D view' }));
+  expect(screen.getByText('Motion reduced: static scene')).toBeTruthy();
+  expect(screen.getByRole('heading', { name: 'Evidence trail' })).toBeTruthy();
+});

@@ -57,7 +57,10 @@ function badge(text: string, tone: string) { return <span className={`badge ${to
 export function App() {
   const [room, setRoom] = useState<Room>(initialRoom);
   const [roomStates, setRoomStates] = useState(loadRooms);
-  const [reduced, setReduced] = useState(() => safeGet('service-house-reduced-motion') === 'true');
+  const [reduced, setReduced] = useState(() => {
+    const saved = safeGet('service-house-reduced-motion');
+    return saved === null ? (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches) : saved === 'true';
+  });
   const [log, setLog] = useState<LogEntry[]>([]);
   const [message, setMessage] = useState('');
   const [show3D, setShow3D] = useState(false);

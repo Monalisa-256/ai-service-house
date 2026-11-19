@@ -29,6 +29,21 @@ test('index, cache, eval and security causes combine without inventing a booking
   assert.equal(restored.candidateNotice,true);
   assert.equal(restored.cacheStale,true); // a corrected index does not automatically invalidate the cache.
   assert.equal(restored.alert,false);
+  assert.throws(()=>extendedTransition(state,'VERIFY_SATURDAY_SLICE'),/Cannot verify recovery/);
+});
+test('contained incident needs index, cache, evaluation repair and affected-slice verification', () => {
+  const events = data.recoverySequence.map((step:{event:ExtendedEvent})=>step.event);
+  const state = replayExtended(events), result = deriveExtended(state);
+  assert.equal(result.rollout,'held');
+  assert.equal(result.recoveryVerified,true);
+  assert.equal(result.candidateNotice,true);
+  assert.equal(result.cacheStale,false);
+  assert.equal(result.evalResult.criticalSaturday,true);
+  assert.equal(result.bookingStatus,'not_booked');
+  assert.equal(result.staffAccess,'denied');
+  assert.equal(deriveExtended(replayExtended(events.slice(0,-1))).recoveryVerified,false);
+  assert.equal(deriveExtended(extendedTransition(state,'DEPLOY_STALE_INDEX')).recoveryVerified,false);
+  assert.throws(()=>replayExtended(['RUN_CANDIDATE_EVAL','VERIFY_SATURDAY_SLICE']),/Cannot verify recovery/);
 });
 test('unsupported extended events reject and replay is deterministic', () => {
   const events: ExtendedEvent[]=['SERVE_STALE_CACHE','DEPLOY_STALE_INDEX'];
