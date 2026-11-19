@@ -38,3 +38,12 @@ test('text remains usable without speech synthesis', () => {
   expect(screen.getByText('A visible transcript.')).toBeTruthy();
   expect(screen.getByRole('button', { name: 'Play narration' }).hasAttribute('disabled')).toBe(true);
 });
+
+test('recorded narration uses native controls and never autoplays', () => {
+  render(<AudioNarration title="First" script="A visible transcript." src="/audio/briefing-1.mp3"/>);
+  const audio=screen.getByLabelText('Narration: First') as HTMLAudioElement;
+  expect(audio.getAttribute('src')).toBe('/audio/briefing-1.mp3');
+  expect(audio.hasAttribute('controls')).toBe(true);
+  expect(audio.hasAttribute('autoplay')).toBe(false);
+  expect(screen.getByText('A visible transcript.')).toBeTruthy();
+});

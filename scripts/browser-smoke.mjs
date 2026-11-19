@@ -12,6 +12,7 @@ try {
   await page.goto('http://127.0.0.1:5173/#/briefing/1');
   await page.getByRole('heading', { name: 'Where did the answer get its evidence?' }).waitFor();
   assert.match(await page.getByRole('region', { name: 'Optional spoken explanation' }).innerText(), /Read narration: Receive the question/);
+  assert.equal(await page.getByLabel('Narration: Receive the question').getAttribute('src'), '/audio/briefing-1.mp3');
   await page.getByRole('button', { name: 'Skip to step explanation' }).click();
   assert.equal(new URL(page.url()).hash, '#/briefing/1');
   await page.getByRole('link', { name: /Assemble the evidence/ }).click();

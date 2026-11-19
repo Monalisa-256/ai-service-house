@@ -1,0 +1,65 @@
+{
+  "generator": "FFmpeg Flite slt / MP3 48 kbps mono",
+  "tracks": {
+    "briefing-1": {
+      "file": "/audio/briefing-1.mp3",
+      "bytes": 77420,
+      "sha256": "e260598360aaa26ede3bcebdf063a38e125d5818f99186fae1901ec4d16749c3",
+      "scriptSha256": "6bc1c4c2db2b417ff9ffab94b67cd27fdb0508cfc25a007d6d2eba3baf524f8d"
+    },
+    "briefing-2": {
+      "file": "/audio/briefing-2.mp3",
+      "bytes": 83180,
+      "sha256": "0b859a0da6824aafede3a2da880282f006db92fddc015d82d218f2b7a2befe61",
+      "scriptSha256": "16b8f67901871f8b3cadb1553bc1c5817a450b2bf68104ebc2449b25328eb0ea"
+    },
+    "briefing-3": {
+      "file": "/audio/briefing-3.mp3",
+      "bytes": 91244,
+      "sha256": "3d97442840308d4ba89c6a5b6eb594979947a53105cb5a3226e4b37dd05f543d",
+      "scriptSha256": "c9bde61d58afbe68ebb99e7e5033d166dbcb8386c99b759782d8fb8e926e187e"
+    },
+    "briefing-4": {
+      "file": "/audio/briefing-4.mp3",
+      "bytes": 102476,
+      "sha256": "2ddc72ab4a92c3c29159699920b8d5f2e6c8d87f910a9092a0ec30b599f3095e",
+      "scriptSha256": "fd1798dd13558e40fbfa36a07d23165ea43dfcf6a4a8d5d912e0c5b2352c17ae"
+    },
+    "briefing-5": {
+      "file": "/audio/briefing-5.mp3",
+      "bytes": 91964,
+      "sha256": "6f339207613697e26fe6d6f7048049b0da8efd4d2cdeb8538ad521c0ff288020",
+      "scriptSha256": "803f41965ea496c5216a3121ca1de61bbf7cecb096142b85c00433496b3333f6"
+    },
+    "records": {
+      "file": "/audio/records.mp3",
+      "bytes": 31628,
+      "sha256": "53c89727c3751d935f12bc2e83094574fc003d7d44e39e082af5bbc4accb7849",
+      "scriptSha256": "4f2d31bf4c852e8287ed26e3909b838abd59c12120dbe5521a3ecbd00d2b99b5"
+    },
+    "workshop": {
+      "file": "/audio/workshop.mp3",
+      "bytes": 31772,
+      "sha256": "090ba0802541bcc64f5d8abef141717dbb44edd46fcdc311b41cc58c4417f128",
+      "scriptSha256": "1ac2fff84f04e4bb8fe0c0da0f096c1ed4397982fbdcc21733635233cef1cafa"
+    },
+    "test-room": {
+      "file": "/audio/test-room.mp3",
+      "bytes": 37676,
+      "sha256": "38df645986220cfa2d36c610e4dff6e1844eebd7b914d5d4b5cf475093513d22",
+      "scriptSha256": "45a5def991db17103594e935ea243c6be1284b9f8e921dd6e845bec05f646aa8"
+    },
+    "security": {
+      "file": "/audio/security.mp3",
+      "bytes": 36956,
+      "sha256": "27816d68f4e8a74ac0fc74802481f81066c9452601a197b3334029d953acdb79",
+      "scriptSha256": "d0f391b161f4607ec3557803dc269417193a4ec7f2039a15bc702ea5761b3c70"
+    },
+    "operations": {
+      "file": "/audio/operations.mp3",
+      "bytes": 43724,
+      "sha256": "453ffd11aa23ffafc8a9258a00917edd2932e89d8d1bec399a3bb5e54010f993",
+      "scriptSha256": "6ff396c3a57db66586cdf95b1b29d17a3310006eb6ae697c3851fcee45ec2d9f"
+    }
+  }
+}
