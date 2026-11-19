@@ -7,7 +7,7 @@ function print(label: string, current: State): void {
 }
 print('baseline', state);
 for (const event of [
-  { type: 'REMOVE_CONTEXT_PASSAGE', passageId: 'p-notice-1' },
+  { type: 'REMOVE_DOCUMENT_FROM_CONTEXT', documentId: 'doc-notice-v2' },
   { type: 'SET_RETRIEVAL_STRATEGY', strategyId: 'hours-only' },
   { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-ok' },
   { type: 'CHECK_TUESDAY_SLOTS', fixtureId: 'tuesday-timeout' }

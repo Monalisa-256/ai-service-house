@@ -1,4 +1,4 @@
-import { initialState, replay, transition, type Content, type Event, type State } from './scenario.ts';
+import { eventTypes, initialState, replay, transition, type Content, type Event, type State } from './scenario.ts';
 
 export type Mode = 'guided' | 'experiment';
 export type Session = {
@@ -11,7 +11,7 @@ export type Session = {
 };
 
 const guidedAllowed: Record<Session['guidedStep'], Event['type'][]> = {
-  briefing: ['REMOVE_CONTEXT_PASSAGE', 'RESTORE_CONTEXT'],
+  briefing: ['REMOVE_CONTEXT_PASSAGE', 'REMOVE_DOCUMENT_FROM_CONTEXT', 'RESTORE_CONTEXT'],
   library: ['SET_RETRIEVAL_STRATEGY'],
   'service-counter': ['CHECK_TUESDAY_SLOTS', 'PROPOSE_SLOT']
 };
@@ -54,4 +54,33 @@ export function restore(content: Content, session: Session, throughEvent: number
   for (const event of events) snapshots.push(transition(content, snapshots[snapshots.length - 1], event));
   if (JSON.stringify(snapshots[snapshots.length - 1]) !== JSON.stringify(replay(content, events))) throw new Error('Replay divergence');
   return { ...session, events, snapshots };
+}
+
+export function exportRun(session: Session): string {
+  return JSON.stringify({ schemaVersion: '1', scenarioId: session.scenarioId, contentVersion: session.contentVersion, mode: session.mode, guidedStep: session.guidedStep, events: session.events });
+}
+
+/** Import only typed, bounded events; snapshots are always recomputed from the trusted content. */
+export function importRun(content: Content, json: string): Session {
+  if (json.length > 64_000) throw new Error('Run exceeds size limit');
+  let data: unknown;
+  try { data = JSON.parse(json); } catch { throw new Error('Invalid run JSON'); }
+  if (!data || typeof data !== 'object') throw new Error('Invalid run format');
+  const value = data as Record<string, unknown>;
+  if (value.schemaVersion !== '1' || value.scenarioId !== content.scenarioId || value.contentVersion !== content.contentVersion) throw new Error('Run version mismatch');
+  if (value.mode !== 'guided' && value.mode !== 'experiment') throw new Error('Invalid run mode');
+  if (value.guidedStep !== 'briefing' && value.guidedStep !== 'library' && value.guidedStep !== 'service-counter') throw new Error('Invalid guided step');
+  if (!Array.isArray(value.events) || value.events.length > 100) throw new Error('Invalid run event count');
+  const events: Event[] = [];
+  for (const item of value.events) {
+    if (!item || typeof item !== 'object' || !eventTypes.includes(item.type)) throw new Error('Invalid run event');
+    const event = item as Event;
+    const key = ({ REMOVE_CONTEXT_PASSAGE: 'passageId', REMOVE_DOCUMENT_FROM_CONTEXT: 'documentId', RESTORE_CONTEXT: null, SET_RETRIEVAL_STRATEGY: 'strategyId', SET_ROLE: 'roleId', CHECK_TUESDAY_SLOTS: 'fixtureId', PROPOSE_SLOT: 'slot', REQUEST_PASSAGE: 'passageId' } as const)[event.type];
+    const properties = Object.keys(item);
+    if (properties.length !== (key ? 2 : 1) || properties.some(p => p !== 'type' && p !== key) || key && (typeof (item as Record<string, unknown>)[key] !== 'string' || !(item as Record<string, string>)[key])) throw new Error('Invalid run event payload');
+    events.push(event);
+  }
+  let session: Session = { ...createSession(content), mode: value.mode, guidedStep: value.guidedStep };
+  for (const event of events) session = dispatch(content, session, event);
+  return session;
 }
